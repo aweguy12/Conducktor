@@ -10,6 +10,7 @@ using UnityEngine;
 
 public class Song : MonoBehaviour
 {
+    public float tempo;
     public Note[] notes;
 
     // Start is called before the first frame update
@@ -34,7 +35,8 @@ public class Song : MonoBehaviour
         for (int i = 0; i < notes.Length; i++)
         {
             notes[i].playNote();
-            yield return new WaitForSeconds(notes[i].getClipLength());
+            yield return new WaitForSeconds(60 / tempo);
+            notes[i].stopNote();
         }
     }
 }

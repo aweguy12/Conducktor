@@ -7,18 +7,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Note : MonoBehaviour
+public class Note : MonoBehaviour, IPointerClickHandler
 {
     public Sprite[] notes;
     public AudioSource[] tones;
     private int note;
-    private SpriteRenderer sr;
+    private Image image;
 
     // Start is called before the first frame update
     void Start()
     {
-        sr = GetComponent<SpriteRenderer>();
+        image = GetComponent<Image>();
     }
 
     // Update is called once per frame
@@ -26,12 +28,14 @@ public class Note : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.UpArrow) && note < notes.Length - 1)
         {
-            sr.sprite = notes[++note];
+            image.sprite = notes[++note];
+            transform.position += new Vector3(0, 0.5f);
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow) && note > 0)
         {
-            sr.sprite = notes[--note];
+            image.sprite = notes[--note];
+            transform.position -= new Vector3(0, 0.5f);
         }
     }
 
@@ -40,8 +44,22 @@ public class Note : MonoBehaviour
         tones[note].Play();
     }
 
+    public void stopNote()
+    {
+        tones[note].Stop();
+    }
+
     public float getClipLength()
     {
         return tones[note].clip.length;
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (note < notes.Length - 1)
+        {
+            image.sprite = notes[++note];
+            transform.position += new Vector3(0, 0.5f);
+        }
     }
 }
