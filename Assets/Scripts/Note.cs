@@ -10,11 +10,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class Note : MonoBehaviour, IPointerClickHandler
+public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
 {
-    public Sprite[] notes;
-    public AudioSource[] tones;
+    public Sprite[] sprites;
+    public Song song;
+    public float offset = 0.5f;
     private int note;
+    [HideInInspector]
+    public float value = 0f;
+    private int index;
     private Image image;
 
     // Start is called before the first frame update
@@ -26,40 +30,54 @@ public class Note : MonoBehaviour, IPointerClickHandler
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.UpArrow) && note < notes.Length - 1)
+
+    }
+
+    public void SetIndex(int index)
+    {
+        this.index = index;
+    }
+
+    public void NoteUp()
+    {
+        if (note < sprites.Length - 1)
         {
-            image.sprite = notes[++note];
-            transform.position += new Vector3(0, 0.5f);
+            image.sprite = sprites[++note];
+            transform.position += new Vector3(0, offset);
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow) && note > 0)
+    public void NoteDown()
+    {
+        if (note > 0)
         {
-            image.sprite = notes[--note];
-            transform.position -= new Vector3(0, 0.5f);
+            image.sprite = sprites[--note];
+            transform.position -= new Vector3(0, offset);
         }
-    }
-
-    public void playNote()
-    {
-        tones[note].Play();
-    }
-
-    public void stopNote()
-    {
-        tones[note].Stop();
-    }
-
-    public float getClipLength()
-    {
-        return tones[note].clip.length;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (note < notes.Length - 1)
+        song.SetFocus(index);
+        if (eventData.button == PointerEventData.InputButton.Left)
         {
-            image.sprite = notes[++note];
-            transform.position += new Vector3(0, 0.5f);
+            NoteDown();   
+        }
+        else
+        {
+            NoteUp();
+        }
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (Camera.main.ScreenToWorldPoint(eventData.position).y < transform.position.y - offset / 2)
+        {
+            NoteDown();
+        }
+        else if (Camera.main.ScreenToWorldPoint(eventData.position).y > transform.position.y + offset / 2)
+        {
+            NoteUp();
         }
     }
 }
