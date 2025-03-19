@@ -1,11 +1,9 @@
 /*
  * Name: Jack Gu
  * Date: 3/13/25
- * Desc: 
+ * Desc: Defines and controls a single note
  */
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -22,7 +20,7 @@ public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
     private Image image;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         image = GetComponent<Image>();
     }
@@ -33,11 +31,13 @@ public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
 
     }
 
+    // Sets index of note at Start
     public void SetIndex(int index)
     {
         this.index = index;
     }
 
+    // Moves note pitch up
     public void NoteUp()
     {
         if (note < sprites.Length - 1)
@@ -47,6 +47,7 @@ public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
         }
     }
 
+    // Moves note pitch down
     public void NoteDown()
     {
         if (note > 0)
@@ -56,6 +57,7 @@ public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
         }
     }
 
+    // Moves note on click
     public void OnPointerClick(PointerEventData eventData)
     {
         song.SetFocus(index);
@@ -69,6 +71,7 @@ public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
         }
     }
 
+    // Moves note on drag
     public void OnDrag(PointerEventData eventData)
     {
         if (Camera.main.ScreenToWorldPoint(eventData.position).y < transform.position.y - offset / 2)

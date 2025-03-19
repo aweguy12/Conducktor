@@ -1,12 +1,10 @@
 /*
  * Name: Jack Gu
  * Date: 3/13/25
- * Desc: 
+ * Desc: Keeps track and controls the Notes of a song
  */
 
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class Song : MonoBehaviour
@@ -55,11 +53,13 @@ public class Song : MonoBehaviour
         }
     }
 
+    // Changes focus on which Note is being modified
     public void SetFocus(int focus)
     {
         this.focus = focus;
     }
 
+    // Called when Value Change button is pressed
     public void ValueChange()
     {
         notes[focus].value = notes[focus].value switch
@@ -71,6 +71,7 @@ public class Song : MonoBehaviour
         };
     }
 
+    // Plays the whole song
     public void PlaySong()
     {
         StartCoroutine(PlayNotes());
