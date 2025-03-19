@@ -1,5 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
+/*
+ * Name: Jack Gu
+ * Date: 3/19/25
+ * Desc: Tells the Song when the focused Note's value should be changed
+ */
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 
