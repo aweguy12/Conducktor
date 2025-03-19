@@ -53,6 +53,7 @@ public class Song : MonoBehaviour
         }
     }
 
+
     // Changes focus on which Note is being modified
     public void SetFocus(int focus)
     {
@@ -62,13 +63,7 @@ public class Song : MonoBehaviour
     // Called when Value Change button is pressed
     public void ValueChange()
     {
-        notes[focus].value = notes[focus].value switch
-        {
-            0f => 0.25f,
-            0.25f => 0.5f,
-            0.5f => 0f,
-            _ => 0.25f,
-        };
+        
     }
 
     // Plays the whole song

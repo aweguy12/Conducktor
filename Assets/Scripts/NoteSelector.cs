@@ -49,23 +49,7 @@ public class NoteSelector : MonoBehaviour
 
     void Start()
     {
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.sprite = noteSprites[1].sprite; // Directly set the first sprite
-        }
-
-
-
-        currentNoteIndex = 0;
-        currentNote = availableNotes[currentNoteIndex];
-        spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
-        UpdateNoteDisplay();
-        if (noteRectTransform != null)
-        {
-            initialPosition = noteRectTransform.anchoredPosition;
-            minPositionY = initialPosition.y - (availableNotes.Count - 1) * moveOffset;
-        }
     }
 
     public void ChangeNote(int direction)
@@ -91,7 +75,6 @@ public class NoteSelector : MonoBehaviour
         Debug.Log("Current Note Index: " + currentNoteIndex);
 
         
-        UpdateNoteDisplay();
 
         if (isSelected)
         {
@@ -130,43 +113,6 @@ public class NoteSelector : MonoBehaviour
         if (noteRectTransform != null)
         {
             noteRectTransform.anchoredPosition = initialPosition;
-        }
-    }
-
-    void UpdateNoteDisplay()
-    {
-        Debug.Log("UpdateNoteDisplay() called!");
-        if (noteDisplay != null)
-        {
-            noteDisplay.text = currentNote.ToString();
-        }
-
-        if (spriteRenderer == null)
-        {
-            Debug.LogWarning("SpriteRenderer is null!");
-            return; // Exit if SpriteRenderer is null
-        }
-
-        if (noteSprites == null)
-        {
-            Debug.LogWarning("noteSprites list is null!");
-            return; //Exit if noteSprites is null
-        }
-
-        foreach (NoteSpritePair pair in noteSprites)
-        {
-            if (pair.note == currentNote)
-            {
-                if (pair.sprite == null)
-                {
-                    Debug.LogWarning("Sprite for " + currentNote + " is null!");
-                }
-                else
-                {
-                    spriteRenderer.sprite = pair.sprite;
-                    return; // Exit after setting the sprite
-                }
-            }
         }
     }
 
@@ -216,7 +162,6 @@ public class NoteSelector : MonoBehaviour
     {
         currentNoteIndex = 0;
         currentNote = availableNotes[currentNoteIndex];
-        UpdateNoteDisplay();
         ResetNotePosition();
     }
 }
