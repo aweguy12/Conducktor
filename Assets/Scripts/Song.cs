@@ -1,6 +1,6 @@
 /*
- * Name: Jack Gu
- * Date: 3/13/25
+ * Name: Jack Gu, Danny Rosemond
+ * Date: 3/20/25
  * Desc: Keeps track and controls the Notes of a song
  */
 
@@ -11,7 +11,7 @@ public class Song : MonoBehaviour
 {
     public float tempo;
     public Note[] notes;
-    public AudioSource[] sounds;
+    public AudioClip[] sounds;
     private int focus = 0;
 
     // Start is called before the first frame update
@@ -28,17 +28,27 @@ public class Song : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if (focus > 0)
+            int i = 0;
+            while (focus - ++i >= 0)
             {
-                focus--;
+                if (notes[focus - i].isEnabled())
+                {
+                    focus -= i;
+                    break;
+                }
             }
         }
 
         if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (focus < notes.Length - 1)
+            int i = 0;
+            while (focus + ++i < notes.Length)
             {
-                focus++;
+                if (notes[focus + i].isEnabled())
+                {
+                    focus += i;
+                    break;
+                }
             }
         }
 
@@ -51,6 +61,11 @@ public class Song : MonoBehaviour
         {
             notes[focus].NoteDown();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ChangeValue();
+        }
     }
 
 
@@ -60,10 +75,24 @@ public class Song : MonoBehaviour
         this.focus = focus;
     }
 
-    // Called when Value Change button is pressed
-    public void ValueChange()
+    // Called when Change Value button is pressed
+    public void ChangeValue()
     {
-        
+        if (focus % 2 == 0)
+        {
+            notes[focus].ChangeValue();
+            notes[focus + 1].ChangeValue();
+        }
+        else
+        {
+            notes[focus].ChangeValue();
+            notes[focus - 1].ChangeValue();
+        }
+
+        while (!notes[focus].isEnabled())
+        {
+            focus--;
+        }
     }
 
     // Plays the whole song
