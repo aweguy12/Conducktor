@@ -7,8 +7,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using System;
-using System.Collections.Generic;
+using ValuePitchEnums;
 
 public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
 {
@@ -22,28 +21,28 @@ public class Note : MonoBehaviour, IPointerClickHandler, IDragHandler
     private Pitch pitch = Pitch.Rest;
     private Value value = Value.Quarter;
 
-    public enum Value
-    {
-        Quarter, Half
-    }
-
-    public enum Pitch
-    {
-        Rest, C4, D4, E4, F4, G4, A4, B4, C5
-    }
-
     // Start is called before the first frame update
     private void Start()
     {
         image = GetComponent<Image>();
         song = GetComponentInParent<Song>();
-        sprites = new Sprite[][] { quarterNoteSprites, halfNoteSprites };
+        sprites = new Sprite[][] { new Sprite[0], quarterNoteSprites, halfNoteSprites };
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    public int GetPitch()
+    {
+        return (int) pitch;
+    }
+
+    public int GetValue()
+    {
+        return (int) value;
     }
 
     // Sets index of note at Start

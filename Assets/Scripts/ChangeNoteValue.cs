@@ -7,17 +7,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ChangeValue : MonoBehaviour, IPointerClickHandler
+public class ChangeNoteValue : MonoBehaviour, IPointerClickHandler
 {
     private Song song;
 
+    // Start is called before the first frame update
     private void Start()
     {
         song = GetComponentInParent<Song>();
     }
 
+    // Called when GameObject is clicked
     public void OnPointerClick(PointerEventData eventData)
     {
-        song.ChangeValue();
+        song.ChangeNoteValue();
     }
 }
