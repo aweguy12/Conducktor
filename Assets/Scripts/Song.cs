@@ -1,6 +1,6 @@
 /*
  * Name: Jack Gu, Danny Rosemond
- * Date: 3/20/25
+ * Date: 3/24/25
  * Desc: Keeps track and controls the Notes of a song
  */
 
@@ -49,7 +49,7 @@ public class Song : MonoBehaviour
             {
                 if (notes[focus - i].isEnabled())
                 {
-                    focus -= i;
+                    SetFocus(focus - i);
                     break;
                 }
             }
@@ -62,7 +62,7 @@ public class Song : MonoBehaviour
             {
                 if (notes[focus + i].isEnabled())
                 {
-                    focus += i;
+                    SetFocus(focus + i);
                     break;
                 }
             }
@@ -88,7 +88,9 @@ public class Song : MonoBehaviour
     // Changes focus on which Note is being modified
     public void SetFocus(int focus)
     {
+        notes[this.focus].DeSelected();
         this.focus = focus;
+        notes[focus].Selected();
     }
 
     // Called when Change Note Value button is pressed
@@ -107,8 +109,14 @@ public class Song : MonoBehaviour
 
         while (!notes[focus].isEnabled())
         {
-            focus--;
+            SetFocus(focus - 1);
         }
+    }
+
+    public void PlayNote()
+    {
+        audioSources[focus].clip = audioClips[notes[focus].GetValue()][notes[focus].GetPitch()];
+        audioSources[focus].Play();
     }
 
     public void ReplaySong()

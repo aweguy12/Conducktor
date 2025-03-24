@@ -1,7 +1,7 @@
 /*
  * Name: Jack Gu
  * Date: 3/21/25
- * Desc: Tells the Song when the player created song should be played
+ * Desc: Tells the Song to play the player-created song
  */
 
 using UnityEngine;

@@ -6,6 +6,7 @@
 
 namespace ValuePitchEnums
 {
+    // Convert to int for the number of quarter note lengths
     public enum Value
     {
         Quarter = 1, Half = 2
