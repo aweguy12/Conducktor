@@ -1,6 +1,6 @@
 /*
  * Name: Jack Gu, Danny Rosemond
- * Date: 3/24/25
+ * Date: 3/25/25
  * Desc: Defines and controls a single note
  */
 
@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using ValuePitchEnums;
 
-public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
+public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IEndDragHandler
 {
     [Tooltip("Quarter note sprites in order, starting with rest.")]
     public Sprite[] quarterNoteSprites;
@@ -44,6 +44,14 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         sprites = new Sprite[][] { new Sprite[0], quarterNoteSprites, halfNoteSprites };
     }
 
+    // Resets Pitch to rest but preserves Value
+    public void Reset()
+    {
+        transform.position -= new Vector3(0, offset * (int) pitch);
+        pitch = Pitch.Rest;
+        image.sprite = sprites[(int) value][(int) Pitch.Rest];
+    }
+
     public int GetPitch()
     {
         return (int) pitch;
@@ -57,6 +65,17 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     public bool isEnabled()
     {
         return image.enabled;
+    }
+
+    public void PlayCurrentNote()
+    {
+        song.PlayNote();
+    }
+
+    // Used by Song to enable/disable focus on the Note
+    public void Selected(bool selected)
+    {
+        this.selected.enabled = selected;
     }
 
     // Used by Song to set index of Note during Start
@@ -116,27 +135,29 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     public void OnPointerDown(PointerEventData eventData)
     {
         song.SetFocus(index);
+        dragged = false;
     }
 
-    // Moves note on click
+    // Moves Note on click end if Note was not dragged
     public void OnPointerUp(PointerEventData eventData)
     {
         if (!dragged)
         {
-            if (eventData.button == PointerEventData.InputButton.Left)
+            switch (eventData.button)
             {
-                NoteDown();
+                case PointerEventData.InputButton.Left:
+                    NoteDown();
+                    break;
+                case PointerEventData.InputButton.Right:
+                    NoteUp();
+                    break;
             }
-            else
-            {
-                NoteUp();
-            }
-        }
 
-        dragged = false;
+            PlayCurrentNote();
+        }
     }
 
-    // Moves note on drag
+    // Moves Note on drag
     public void OnDrag(PointerEventData eventData)
     {
         if (Camera.main.ScreenToWorldPoint(eventData.position).y < transform.position.y - offset / 2)
@@ -151,25 +172,12 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         }
     }
 
-    public void ResetToRest()
+    // Only plays Note sound after the drag
+    public void OnEndDrag(PointerEventData eventData)
     {
-        transform.position -= new Vector3(0, offset * (int) pitch);
-        pitch = Pitch.Rest;
-        image.sprite = sprites[(int) value][0];
-    }
-
-    public void Selected()
-    {
-        selected.enabled = true;
-    }
-
-    public void DeSelected()
-    {
-        selected.enabled = false;
-    }
-
-    public void PlayCurrentNote()
-    {
-        song.PlayNote();
+        if (dragged)
+        {
+            PlayCurrentNote();
+        }
     }
 }
