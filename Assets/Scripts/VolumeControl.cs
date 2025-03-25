@@ -32,10 +32,14 @@ public class VolumeControl : MonoBehaviour
     public void SetSFXVolume(float volume)
     {
         sfxMixer.SetFloat(sfxVolumeParameter, volume);
+        PlayerPrefs.SetFloat("SFXVolume", volume);
+        PlayerPrefs.Save();
     }
 
     public void SetMusicVolume(float volume)
     {
         musicMixer.SetFloat(musicVolumeParameter, volume);
+        PlayerPrefs.SetFloat("SFXVolume", volume);
+        PlayerPrefs.Save();
     }
 }

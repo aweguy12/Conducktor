@@ -12,12 +12,17 @@ public class SceneChanger : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Scene");
+        SceneManager.LoadScene("Main");
     }
 
     public void Settings()
     {
         SceneManager.LoadScene("Settings");
+    }
+
+    public void Back()
+    {
+        SceneManager.LoadScene("StartScreen");
     }
  
 }
