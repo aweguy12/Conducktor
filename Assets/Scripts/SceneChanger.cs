@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 
 public class SceneChanger : MonoBehaviour
 {
@@ -23,6 +24,11 @@ public class SceneChanger : MonoBehaviour
     public void Back()
     {
         SceneManager.LoadScene("StartScreen");
+    }
+
+    public void Quack()
+    {
+        
     }
  
 }
