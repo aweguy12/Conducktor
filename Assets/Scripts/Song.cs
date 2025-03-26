@@ -78,7 +78,7 @@ public class Song : MonoBehaviour
         audioSources = GetComponentsInChildren<AudioSource>();
 
         // Ordered to match integral values of Value
-        audioClips = new AudioClip[][] { new AudioClip[0], quarterNoteAudioClips, halfNoteAudioClips };
+        audioClips = new AudioClip[][] { null, quarterNoteAudioClips, halfNoteAudioClips };
         levels = new NoteValuePitch[][] { level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11, level12 };
         
         // Tell individual Notes what index they are
@@ -187,6 +187,9 @@ public class Song : MonoBehaviour
         {
             SetFocus(focus - 1);
         }
+
+        // Set focus again because it was reset by ChangeValue()
+        SetFocus(focus);
     }
 
     // Plays currently selected Note on modification
@@ -205,7 +208,7 @@ public class Song : MonoBehaviour
 
         for (int i = 0; i < audioSources.Length; i += notes[i].GetValue())
         {
-            if (correct && notes[i].GetValue() != (int) levels[level][i].value && notes[i].GetPitch() != (int) levels[level][i].pitch)
+            if (correct && notes[i].GetPitch() != (int) Pitch.Rest && notes[i].GetValue() != (int) levels[level][i].value && notes[i].GetPitch() != (int) levels[level][i].pitch)
             {
                 correct = false;
             }
@@ -221,6 +224,10 @@ public class Song : MonoBehaviour
             {
                 note.Reset();
             }
+
+            level++;
+
+            SetFocus(0);
         }
     }
 
