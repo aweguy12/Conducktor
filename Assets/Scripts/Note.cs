@@ -13,44 +13,28 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
 {
     [Tooltip("The vertical offset on change in Pitch.")]
     public int verticalOffset = 100;
-
-    [Tooltip("The horizontal offset on change in Value, should be half of the distance between two Notes.")]
-    public int horizontalOffset = 75;
-
-    [Tooltip("Quarter note sprites in order, starting with rest.")]
-    public Sprite[] quarterNoteSprites;
-
-    [Tooltip("Half note sprites in order, starting with rest.")]
-    public Sprite[] halfNoteSprites;
-
-    // Stores own Note index in Song
-    private int index;
     
     // Remembers when Note is being dragged (used to prevent single-click Pitch changes after a drag)
     private bool dragged = false;
 
+
     private RectTransform rect;
-    private Song song;
+    private Chord chord;
     private Image image;
     private Canvas canvas;
-    private Value value = Value.Quarter;
     private Pitch pitch = Pitch.Rest;
     private Image[] outlines;
-    private Sprite[][] sprites;
 
     // Start is called before the first frame update
     private void Start()
     {
-        rect = transform.parent.parent.GetComponent<RectTransform>();
-        song = GetComponentInParent<Song>();
+        rect = transform.parent.parent.parent.GetComponent<RectTransform>();
+        chord = GetComponentInParent<Chord>();
         image = GetComponent<Image>();
-        canvas = transform.parent.parent.GetComponent<Canvas>();
+        canvas = rect.GetComponent<Canvas>();
 
         // Order Image components in children to match up with integral values of Value
         outlines = new Image[] { null, transform.GetChild(0).GetComponent<Image>(), transform.GetChild(1).GetComponent<Image>()};
-
-        // Order these to match up with integral values of Value
-        sprites = new Sprite[][] { null, quarterNoteSprites, halfNoteSprites };
     }
 
     // Resets Pitch to rest but preserves Value
@@ -58,25 +42,15 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     {
         while (pitch != Pitch.Rest)
         {
-            NoteDown();
+            chord.NoteDown((int) pitch);
         }
 
-        while (value != Value.Quarter)
-        {
-            ChangeValue();
-        }
-
-        image.sprite = sprites[(int) value][(int) pitch];
+        image.sprite = chord.GetSprite((int) pitch);
     }
 
     public int GetPitch()
     {
         return (int) pitch;
-    }
-
-    public int GetValue()
-    {
-        return (int) value;
     }
 
     public bool isEnabled()
@@ -86,83 +60,31 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
 
     public void PlayCurrentNote()
     {
-        song.PlayNote();
+        chord.PlayNote();
     }
 
-    // Used by Song to enable/disable focus on the Note
-    public void Selected(bool selected)
+    public void SetSprite(Sprite sprite)
     {
-        outlines[(int) value].enabled = selected;
+        image.sprite = sprite;
     }
 
-    // Used by Song to set index of Note during Start
-    public void SetIndex(int index)
+    // Used by Song -> Chord to enable focus on the Note
+    public void Selected(int value)
     {
-        this.index = index;
+        outlines[value].enabled = true;
     }
 
-    // Cycles between Values
-    public void ChangeValue()
+
+    // Used by Song -> Chord to disable focus on the Note
+    public void DeSelected(int value)
     {
-        // Remove outline no matter what
-        outlines[(int) value].enabled = false;
-
-        // Reset size and position
-        transform.localScale /= (int) value;
-        transform.localPosition -= new Vector3((int) value / 2 * horizontalOffset, 0);
-
-        switch (value)
-        {
-            case Value.Quarter:
-                value = Value.Half;
-                break;
-
-            case Value.Half:
-                value = Value.Quarter;
-                break;
-        }
-
-        // Hides/reveals/modifies Note based on Value
-        if (index % (int) value == 0)
-        {
-            image.enabled = true;
-        }
-        else
-        {
-            image.enabled = false;
-        }
-
-        // Resize and reposition
-        transform.localPosition += new Vector3((int) value / 2 * horizontalOffset, 0);
-        transform.localScale *= (int) value;
-
-        image.sprite = sprites[(int) value][(int) pitch];
-    }
-
-    // Moves Note Pitch up by 1
-    public void NoteUp()
-    {
-        if ((int) pitch < sprites[(int) value].Length - 1)
-        {
-            image.sprite = sprites[(int) value][(int) ++pitch];
-            transform.localPosition += new Vector3(0, verticalOffset);
-        }
-    }
-
-    // Moves Note Pitch down by 1
-    public void NoteDown()
-    {
-        if (pitch > 0)
-        {
-            image.sprite = sprites[(int) value][(int) --pitch];
-            transform.localPosition -= new Vector3(0, verticalOffset);
-        }
+        outlines[value].enabled = false;
     }
 
     // Set focus on click start
     public void OnPointerDown(PointerEventData eventData)
     {
-        song.SetFocus(index);
+        chord.SetFocus();
         dragged = false;
     }
 
@@ -174,10 +96,10 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
             switch (eventData.button)
             {
                 case PointerEventData.InputButton.Left:
-                    NoteDown();
+                    chord.NoteDown((int) pitch);
                     break;
                 case PointerEventData.InputButton.Right:
-                    NoteUp();
+                    chord.NoteUp((int) pitch);
                     break;
             }
 
@@ -191,12 +113,12 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
         if (localPoint.y < transform.localPosition.y - verticalOffset / 2)
         {
-            NoteDown();
+            chord.NoteDown((int) pitch);
             dragged = true;
         }
         else if (localPoint.y * canvas.scaleFactor > transform.localPosition.y + verticalOffset / 2)
         {
-            NoteUp();
+            chord.NoteUp((int) pitch);
             dragged = true;
         }
     }

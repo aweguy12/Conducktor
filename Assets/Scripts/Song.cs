@@ -13,8 +13,14 @@ public class Song : MonoBehaviour
     [Tooltip("Tempo of the song.")]
     public float tempo;
 
-    [Tooltip("Individual notes in order.")]
-    public Note[] notes;
+    [Tooltip("Individual chords in order.")]
+    public Chord[] notes;
+
+    [Tooltip("Quarter note sprites in order, starting with rest.")]
+    public Sprite[] quarterNoteSprites;
+
+    [Tooltip("Half note sprites in order, starting with rest.")]
+    public Sprite[] halfNoteSprites;
 
     [Tooltip("Quarter note audio clips in order, start with an empty clip for rest.")]
     public AudioClip[] quarterNoteAudioClips;
@@ -62,6 +68,8 @@ public class Song : MonoBehaviour
     // Above levels put in one array
     private NoteValuePitch[][] levels;
 
+    private Sprite[][] sprites;
+
 
     [Serializable]
     // Used to simplify Song creation in editor
@@ -71,11 +79,18 @@ public class Song : MonoBehaviour
         public Pitch pitch;
     }
 
+    public Sprite GetSprite(int value, int pitch)
+    {
+        return sprites[value][pitch];
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         audioSources = GetComponentsInChildren<AudioSource>();
+
+        // Order these to match up with integral values of Value
+        sprites = new Sprite[][] { null, quarterNoteSprites, halfNoteSprites };
 
         // Ordered to match integral values of Value
         audioClips = new AudioClip[][] { null, quarterNoteAudioClips, halfNoteAudioClips };
