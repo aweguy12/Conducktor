@@ -1,3 +1,8 @@
+/*
+ * Name: Danny Rosemond
+ * Date: 3/20/25
+ * Desc: Change scenes in game
+*/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

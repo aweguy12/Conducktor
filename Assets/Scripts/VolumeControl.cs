@@ -1,3 +1,8 @@
+/*
+ * Name: Danny Rosemond
+ * Date: 3/24/2025
+ * Desc: Used for the settings menu to change volume of sounds
+*/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
