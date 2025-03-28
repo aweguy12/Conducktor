@@ -62,6 +62,9 @@ public class Song : MonoBehaviour
     // Above levels put in one array
     private NoteValuePitch[][] levels;
 
+    //level-up sprites
+    public GameObject levelSprite;
+    
 
     [Serializable]
     // Used to simplify Song creation in editor
@@ -226,6 +229,7 @@ public class Song : MonoBehaviour
             }
 
             level++;
+            levelSprite.SetActive(true);
 
             SetFocus(0);
         }

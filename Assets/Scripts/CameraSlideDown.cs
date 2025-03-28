@@ -6,7 +6,8 @@ public class CameraSlideDown : MonoBehaviour
     public Camera mainCamera; 
     public Button slideButton; 
     public Vector3 targetPosition; 
-    public float slideDuration = 2f; 
+    public float slideDuration = 2f;
+    public GameObject gameplay;
 
     private Vector3 startPosition;
     private float elapsedTime = 0f;
@@ -18,10 +19,16 @@ public class CameraSlideDown : MonoBehaviour
         slideButton.onClick.AddListener(StartSlide);
     }
 
-    void StartSlide()
+    public void StartSlide()
     {
+        Debug.Log("slide called");
         isSliding = true;
         elapsedTime = 0f;
+    }
+
+    public void OnMouseDown()
+    {
+        StartSlide();
     }
 
     void Update()
@@ -36,6 +43,10 @@ public class CameraSlideDown : MonoBehaviour
             if (t >= 1f)
             {
                 isSliding = false;
+                if (gameplay != null)
+                {
+                    gameplay.SetActive(true);
+                }
             }
         }
     }
