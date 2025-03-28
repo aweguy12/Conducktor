@@ -1,6 +1,6 @@
 /*
  * Name: Jack Gu, Danny Rosemond
- * Date: 3/24/25
+ * Date: 3/28/25
  * Desc: Keeps track and controls the Notes of a song
  */
 
@@ -14,7 +14,7 @@ public class Song : MonoBehaviour
     public float tempo;
 
     [Tooltip("Individual chords in order.")]
-    public Chord[] notes;
+    public Chord[] chords;
 
     [Tooltip("Quarter note sprites in order, starting with rest.")]
     public Sprite[] quarterNoteSprites;
@@ -22,11 +22,17 @@ public class Song : MonoBehaviour
     [Tooltip("Half note sprites in order, starting with rest.")]
     public Sprite[] halfNoteSprites;
 
+    // Above Sprites in one array
+    private Sprite[][] sprites;
+
     [Tooltip("Quarter note audio clips in order, start with an empty clip for rest.")]
     public AudioClip[] quarterNoteAudioClips;
 
     [Tooltip("Half note audio clips in order, start with an empty clip for rest.")]
     public AudioClip[] halfNoteAudioClips;
+
+    // Above Audio Clips put in one array
+    private AudioClip[][] audioClips;
 
     [Tooltip("Song for level 1, include empty notes after half notes.")]
     public NoteValuePitch[] level1;
@@ -52,7 +58,10 @@ public class Song : MonoBehaviour
     public NoteValuePitch[] level11;
     [Tooltip("Song for level 12, include empty notes after half notes.")]
     public NoteValuePitch[] level12;
-    
+
+    // Above levels put in one array
+    private NoteValuePitch[][] levels;
+
     // 0-indexed level so level + 1 is actual level number
     private int level = 0;
 
@@ -62,15 +71,6 @@ public class Song : MonoBehaviour
     // Note Audio Sources in order
     private AudioSource[] audioSources;
 
-    // Above Audio Clips put in one array
-    private AudioClip[][] audioClips;
-
-    // Above levels put in one array
-    private NoteValuePitch[][] levels;
-
-    private Sprite[][] sprites;
-
-
     [Serializable]
     // Used to simplify Song creation in editor
     public class NoteValuePitch
@@ -79,27 +79,21 @@ public class Song : MonoBehaviour
         public Pitch pitch;
     }
 
-    public Sprite GetSprite(int value, int pitch)
-    {
-        return sprites[value][pitch];
-    }
-
     // Start is called before the first frame update
     void Start()
     {
         audioSources = GetComponentsInChildren<AudioSource>();
 
-        // Order these to match up with integral values of Value
+        // Order both of these to match up with integral values of Value
         sprites = new Sprite[][] { null, quarterNoteSprites, halfNoteSprites };
-
-        // Ordered to match integral values of Value
         audioClips = new AudioClip[][] { null, quarterNoteAudioClips, halfNoteAudioClips };
+
         levels = new NoteValuePitch[][] { level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11, level12 };
         
-        // Tell individual Notes what index they are
-        for (int i = 0; i < notes.Length; i++)
+        // Tell individual Chords what index they are
+        for (int i = 0; i < chords.Length; i++)
         {
-            notes[i].SetIndex(i);
+            chords[i].SetIndex(i);
         }
     }
 
@@ -110,10 +104,11 @@ public class Song : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             int i = 0;
-            // Seek left for enabled Note
+
+            // Seek left for enabled Chord
             while (focus - ++i >= 0)
             {
-                if (notes[focus - i].isEnabled())
+                if (chords[focus - i].gameObject.activeSelf)
                 {
                     SetFocus(focus - i);
                     break;
@@ -129,9 +124,9 @@ public class Song : MonoBehaviour
             int i = 0;
 
             // Seek right for enabled Note
-            while (focus + ++i < notes.Length)
+            while (focus + ++i < chords.Length)
             {
-                if (notes[focus + i].isEnabled())
+                if (chords[focus + i].gameObject.activeSelf)
                 {
                     SetFocus(focus + i);
                     break;
@@ -144,14 +139,14 @@ public class Song : MonoBehaviour
         // Check up direction key input        
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
-            notes[focus].NoteUp();
+            chords[focus].NoteUp();
             PlayNote();
         }
 
         // Check down direction key input
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
-            notes[focus].NoteDown();
+            chords[focus].NoteDown();
             PlayNote();
         }
 
@@ -175,13 +170,17 @@ public class Song : MonoBehaviour
         }
     }
 
+    public Sprite GetSprite(int value, int pitch)
+    {
+        return sprites[value][pitch];
+    }
 
     // Changes focus on which Note is being modified
     public void SetFocus(int focus)
     {
-        notes[this.focus].Selected(false);
+        chords[this.focus].DeSelected();
         this.focus = focus;
-        notes[focus].Selected(true);
+        chords[focus].Selected();
     }
 
     // Called when Change Note Value button is pressed
@@ -189,16 +188,16 @@ public class Song : MonoBehaviour
     {
         if (focus % 2 == 0)
         {
-            notes[focus].ChangeValue();
-            notes[focus + 1].ChangeValue();
+            chords[focus].ChangeValue();
+            chords[focus + 1].ChangeValue();
         }
         else
         {
-            notes[focus].ChangeValue();
-            notes[focus - 1].ChangeValue();
+            chords[focus].ChangeValue();
+            chords[focus - 1].ChangeValue();
         }
 
-        while (!notes[focus].isEnabled())
+        while (!chords[focus].IsEnabled())
         {
             SetFocus(focus - 1);
         }
@@ -210,9 +209,9 @@ public class Song : MonoBehaviour
     // Plays currently selected Note on modification
     public void PlayNote()
     {
-        audioSources[focus].clip = audioClips[notes[focus].GetValue()][notes[focus].GetPitch()];
+        audioSources[focus].clip = audioClips[chords[focus].GetValue()][chords[focus].GetPitch()];
         audioSources[focus].Play();
-        audioSources[focus].SetScheduledEndTime(AudioSettings.dspTime + notes[focus].GetValue() * 60 / tempo);
+        audioSources[focus].SetScheduledEndTime(AudioSettings.dspTime + chords[focus].GetValue() * 60 / tempo);
     }
 
     // Plays the whole song
@@ -221,23 +220,23 @@ public class Song : MonoBehaviour
         double currentTime = AudioSettings.dspTime;
         bool correct = true;
 
-        for (int i = 0; i < audioSources.Length; i += notes[i].GetValue())
+        for (int i = 0; i < audioSources.Length; i += chords[i].GetValue())
         {
-            if (correct && notes[i].GetPitch() != (int) Pitch.Rest && notes[i].GetValue() != (int) levels[level][i].value && notes[i].GetPitch() != (int) levels[level][i].pitch)
+            if (correct && chords[i].GetPitch() != (int) Pitch.Rest && chords[i].GetValue() != (int) levels[level][i].value && chords[i].GetPitch() != (int) levels[level][i].pitch)
             {
                 correct = false;
             }
 
-            audioSources[i].clip = audioClips[notes[i].GetValue()][notes[i].GetPitch()];
+            audioSources[i].clip = audioClips[chords[i].GetValue()][chords[i].GetPitch()];
             audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
-            audioSources[i].SetScheduledEndTime(currentTime + (i + notes[i].GetValue()) * 60 / tempo);
+            audioSources[i].SetScheduledEndTime(currentTime + (i + chords[i].GetValue()) * 60 / tempo);
         }
 
         if (correct)
         {
-            foreach (Note note in notes)
+            foreach (Chord chord in chords)
             {
-                note.Reset();
+                chord.Reset();
             }
 
             level++;

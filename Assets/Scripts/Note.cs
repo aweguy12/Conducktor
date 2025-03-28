@@ -1,6 +1,6 @@
 /*
  * Name: Jack Gu, Danny Rosemond
- * Date: 3/25/25
+ * Date: 3/28/25
  * Desc: Defines and controls a single note
  */
 
@@ -12,16 +12,19 @@ using ValuePitchEnums;
 public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IEndDragHandler
 {
     [Tooltip("The vertical offset on change in Pitch.")]
-    public int verticalOffset = 100;
-    
+    public int pitchOffset = 100;
+
+    [Tooltip("The horizontal offset for displaying adjacent Notes in a Chord.")]
+    public int adjacentOffset = 50;
+
     // Remembers when Note is being dragged (used to prevent single-click Pitch changes after a drag)
     private bool dragged = false;
 
-
+    private bool offset = false;
     private RectTransform rect;
+    private Canvas canvas;
     private Chord chord;
     private Image image;
-    private Canvas canvas;
     private Pitch pitch = Pitch.Rest;
     private Image[] outlines;
 
@@ -42,7 +45,7 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     {
         while (pitch != Pitch.Rest)
         {
-            chord.NoteDown((int) pitch);
+            NoteDown();
         }
 
         image.sprite = chord.GetSprite((int) pitch);
@@ -53,9 +56,23 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         return (int) pitch;
     }
 
-    public bool isEnabled()
+    public bool IsEnabled()
     {
         return image.enabled;
+    }
+
+    public void Offset(bool off)
+    {
+        if (off)
+        {
+            transform.localPosition += new Vector3(adjacentOffset, 0);
+            offset = true;
+        }
+        else if (offset)
+        {
+            transform.localPosition -= new Vector3(adjacentOffset, 0);
+            offset = false;
+        }
     }
 
     public void PlayCurrentNote()
@@ -81,6 +98,20 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         outlines[value].enabled = false;
     }
 
+    // Moves Note Pitch up by 1
+    public void NoteUp()
+    {
+        image.sprite = chord.GetSprite((int)++pitch);
+        transform.localPosition += new Vector3(0, pitchOffset);
+    }
+
+    // Moves Note Pitch down by 1
+    public void NoteDown()
+    {
+        image.sprite = chord.GetSprite((int) --pitch);
+        transform.localPosition -= new Vector3(0, pitchOffset);
+    }
+
     // Set focus on click start
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -91,15 +122,16 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     // Moves Note on click end if Note was not dragged
     public void OnPointerUp(PointerEventData eventData)
     {
+        
         if (!dragged)
         {
             switch (eventData.button)
             {
                 case PointerEventData.InputButton.Left:
-                    chord.NoteDown((int) pitch);
+                    chord.NoteDown();
                     break;
                 case PointerEventData.InputButton.Right:
-                    chord.NoteUp((int) pitch);
+                    chord.NoteUp();
                     break;
             }
 
@@ -111,14 +143,14 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     public void OnDrag(PointerEventData eventData)
     {
         RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
-        if (localPoint.y < transform.localPosition.y - verticalOffset / 2)
+        if (localPoint.y < transform.localPosition.y - pitchOffset / 2)
         {
-            chord.NoteDown((int) pitch);
+            chord.NoteDown();
             dragged = true;
         }
-        else if (localPoint.y * canvas.scaleFactor > transform.localPosition.y + verticalOffset / 2)
+        else if (localPoint.y * canvas.scaleFactor > transform.localPosition.y + pitchOffset / 2)
         {
-            chord.NoteUp((int) pitch);
+            chord.NoteUp();
             dragged = true;
         }
     }

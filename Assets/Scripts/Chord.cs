@@ -5,9 +5,7 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using ValuePitchEnums;
 
@@ -40,12 +38,27 @@ public class Chord : MonoBehaviour
         
     }
 
-    private void Reset()
+    public void Reset()
     {
         while (value != Value.Quarter)
         {
             ChangeValue();
         }
+    }
+
+    public void Selected()
+    {
+        notes[focus].Selected((int) value);
+    }
+
+    public void DeSelected()
+    {
+        notes[focus].DeSelected((int) value);
+    }
+
+    public int GetPitch()
+    {
+        return notes[index].GetPitch();
     }
 
     // Used by Song to set index of Chord during Start
@@ -55,23 +68,66 @@ public class Chord : MonoBehaviour
     }
 
     // Moves Note Pitch up by 1
-    public void NoteUp(int pitch)
+    public void NoteUp()
     {
-        for (int i = pitch; i < )
-        if ((int) pitch < 1)
+        bool up = false;
+        int note = focus + 1;
+        for (int pitch = notes[focus].GetPitch() + 1; Enum.IsDefined(typeof(Pitch), pitch); pitch++)
         {
-            image.sprite = chord.GetSprite((int)++pitch);
-            transform.localPosition += new Vector3(0, verticalOffset);
+            if (note >= notes.Count || notes[note++].GetPitch() > pitch)
+            {
+                up = true;
+                break;
+            }
+        }
+
+        if (up)
+        {
+            bool offset = false;
+
+            if (++note < notes.Count - 1 && notes[note + 1].GetPitch() == notes[note].GetPitch() + 2)
+            {
+                offset = true;
+            }
+
+            while (note > focus)
+            {
+                notes[note].NoteDown();
+                notes[note--].Offset(offset);
+                offset = !offset;
+            }
         }
     }
 
-    // Moves Note Pitch down by 1
-    public void NoteDown(int pitch)
+    // Moves focused Note Pitch down by 1, checks for Notes underneath
+    public void NoteDown()
     {
-        if (pitch > 0)
+        bool down = false;
+        int note = focus - 1;
+        for (int pitch = notes[focus].GetPitch() - 1; pitch >= 0; pitch--)
         {
-            image.sprite = chord.GetSprite((int)--pitch);
-            transform.localPosition -= new Vector3(0, verticalOffset);
+            if (note < 0 || notes[note--].GetPitch() < pitch)
+            {
+                down = true;
+                break;
+            }
+        }
+
+        if (down)
+        {
+            bool offset = false;
+
+            if (++note > 0 && notes[note - 1].GetPitch() == notes[note].GetPitch() - 2)
+            {
+                offset = true;
+            }
+
+            while (note < focus)
+            {
+                notes[note].NoteDown();
+                notes[note++].Offset(offset);
+                offset = !offset;
+            }
         }
     }
 
@@ -119,6 +175,10 @@ public class Chord : MonoBehaviour
         transform.localScale *= (int) value;
     }
 
+    public bool IsEnabled()
+    {
+        return notes[focus].IsEnabled();
+    }
     public int GetValue()
     {
         return (int) value;
