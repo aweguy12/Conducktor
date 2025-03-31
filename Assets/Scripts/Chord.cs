@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using ValuePitchEnums;
 
@@ -14,8 +15,13 @@ public class Chord : MonoBehaviour
     [Tooltip("The horizontal offset on change in Value, should be half of the distance between two Notes.")]
     public int horizontalOffset = 75;
 
+    public GameObject notePrefab;
+
     // Stores own Chord index in Song
     private int index;
+
+    // Note Audio Sources in order
+    private List<AudioSource> audioSources;
 
     private Song song;
 
@@ -30,12 +36,7 @@ public class Chord : MonoBehaviour
     {
         song = GetComponentInParent<Song>();
         notes.Add(transform.GetChild(0).GetComponent<Note>());
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        audioSources.Add(GetComponentInChildren<AudioSource>());
     }
 
     public void Reset()
@@ -44,6 +45,8 @@ public class Chord : MonoBehaviour
         {
             ChangeValue();
         }
+
+        notes[0].Reset();
     }
 
     public void Selected()
@@ -58,7 +61,7 @@ public class Chord : MonoBehaviour
 
     public int GetPitch()
     {
-        return notes[index].GetPitch();
+        return notes[focus].GetPitch();
     }
 
     // Used by Song to set index of Chord during Start
@@ -97,6 +100,13 @@ public class Chord : MonoBehaviour
                 offset = !offset;
             }
         }
+        else
+        {
+            if (focus < notes.Count - 1)
+            {
+                focus++;
+            }
+        }
     }
 
     // Moves focused Note Pitch down by 1, checks for Notes underneath
@@ -122,11 +132,18 @@ public class Chord : MonoBehaviour
                 offset = true;
             }
 
-            while (note < focus)
+            while (note <= focus)
             {
                 notes[note].NoteDown();
                 notes[note++].Offset(offset);
                 offset = !offset;
+            }
+        }
+        else
+        {
+            if (focus > 0)
+            {
+                focus--;
             }
         }
     }
@@ -141,29 +158,29 @@ public class Chord : MonoBehaviour
         // Remove outline
         notes[focus].DeSelected((int) value);
 
+        switch (value)
+        {
+            case Value.Quarter:
+                value = Value.Half;
+                break;
+
+            case Value.Half:
+                value = Value.Quarter;
+                break;
+        }
+
+        // Hides/reveals Chord based on Value
+        if (index % (int) value == 0)
+        {
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+
         foreach (Note note in notes)
         {
-            switch (value)
-            {
-                case Value.Quarter:
-                    value = Value.Half;
-                    break;
-
-                case Value.Half:
-                    value = Value.Quarter;
-                    break;
-            }
-
-            // Hides/reveals Chord based on Value
-            if (index % (int) value == 0)
-            {
-                note.gameObject.SetActive(true);
-            }
-            else
-            {
-                note.gameObject.SetActive(false);
-            }
-
             note.SetSprite(song.GetSprite((int) value, note.GetPitch()));
         }
 
@@ -177,16 +194,21 @@ public class Chord : MonoBehaviour
 
     public bool IsEnabled()
     {
-        return notes[focus].IsEnabled();
+        return gameObject.activeSelf;
     }
     public int GetValue()
     {
         return (int) value;
     }
 
-    public void PlayNote()
+    public void PlayChord(double time)
     {
-
+        foreach (Note note in notes)
+        {
+            audioSources[focus].clip = song.GetAudioClip((int) value, note.GetPitch());
+            audioSources[focus].PlayScheduled(time);
+            audioSources[focus].SetScheduledEndTime(time + (double) value * 60 / song.GetTempo());
+        }
     }
 
     public Sprite GetSprite(int pitch)
@@ -194,8 +216,42 @@ public class Chord : MonoBehaviour
         return song.GetSprite((int) value, pitch);
     }
 
-    public void SetFocus()
+    public void SetFocus(int focus)
     {
+        notes[this.focus].DeSelected((int) value);
+        this.focus = focus;
+        notes[this.focus].Selected((int)value);
         song.SetFocus(index);
+    }
+
+    public void AddNote()
+    {
+        GameObject newNote = Instantiate(notePrefab, notes[focus].transform.position, Quaternion.identity, transform);
+        SetFocus(++focus);
+        notes.Insert(focus, newNote.GetComponent<Note>());
+
+        for (int i = focus + 1; i < notes.Count; i++)
+        {
+            notes[i].index = i;
+        }
+
+        NoteUp();
+
+        if (newNote.transform.position == notes[focus - 1].transform.position)
+        {
+            Destroy(newNote);
+        }
+    }
+
+    public void RemoveNote()
+    {
+        Destroy(notes[focus].gameObject);
+        notes.RemoveAt(focus);
+        SetFocus(--focus);
+
+        for (int i = focus; i < notes.Count; i++)
+        {
+            notes[i].index = i;
+        }
     }
 }

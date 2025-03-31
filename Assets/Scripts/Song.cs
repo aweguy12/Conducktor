@@ -11,7 +11,7 @@ using ValuePitchEnums;
 public class Song : MonoBehaviour
 {
     [Tooltip("Tempo of the song.")]
-    public float tempo;
+    public int tempo;
 
     [Tooltip("Individual chords in order.")]
     public Chord[] chords;
@@ -68,9 +68,6 @@ public class Song : MonoBehaviour
     // Note that Song is focused/selected on, only modify this with SetFocus()
     private int focus = 0;
 
-    // Note Audio Sources in order
-    private AudioSource[] audioSources;
-
     [Serializable]
     // Used to simplify Song creation in editor
     public class NoteValuePitch
@@ -82,8 +79,6 @@ public class Song : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        audioSources = GetComponentsInChildren<AudioSource>();
-
         // Order both of these to match up with integral values of Value
         sprites = new Sprite[][] { null, quarterNoteSprites, halfNoteSprites };
         audioClips = new AudioClip[][] { null, quarterNoteAudioClips, halfNoteAudioClips };
@@ -115,7 +110,7 @@ public class Song : MonoBehaviour
                 }
             }
 
-            PlayNote();
+            chords[focus].PlayChord(AudioSettings.dspTime);
         }
 
         // Check right direction key input
@@ -123,7 +118,7 @@ public class Song : MonoBehaviour
         {
             int i = 0;
 
-            // Seek right for enabled Note
+            // Seek right for enabled Chord
             while (focus + ++i < chords.Length)
             {
                 if (chords[focus + i].gameObject.activeSelf)
@@ -133,28 +128,28 @@ public class Song : MonoBehaviour
                 }
             }
 
-            PlayNote();
+            chords[focus].PlayChord(AudioSettings.dspTime);
         }
 
         // Check up direction key input        
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             chords[focus].NoteUp();
-            PlayNote();
+            chords[focus].PlayChord(AudioSettings.dspTime);
         }
 
         // Check down direction key input
         if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             chords[focus].NoteDown();
-            PlayNote();
+            chords[focus].PlayChord(AudioSettings.dspTime);
         }
 
         // Space changes Note Value
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangeNoteValue();
-            PlayNote();
+            chords[focus].PlayChord(AudioSettings.dspTime);
         }
 
         // Enter plays created song
@@ -170,6 +165,15 @@ public class Song : MonoBehaviour
         }
     }
 
+    public int GetTempo()
+    {
+        return tempo;
+    }
+    public AudioClip GetAudioClip(int value, int pitch)
+    {
+        return audioClips[value][pitch];
+    }
+
     public Sprite GetSprite(int value, int pitch)
     {
         return sprites[value][pitch];
@@ -181,6 +185,16 @@ public class Song : MonoBehaviour
         chords[this.focus].DeSelected();
         this.focus = focus;
         chords[focus].Selected();
+    }
+
+    public void AddNote()
+    {
+        chords[focus].AddNote();
+    }
+
+    public void RemoveNote()
+    {
+        chords[focus].RemoveNote();
     }
 
     // Called when Change Note Value button is pressed
@@ -197,7 +211,7 @@ public class Song : MonoBehaviour
             chords[focus - 1].ChangeValue();
         }
 
-        while (!chords[focus].IsEnabled())
+        while (!chords[focus].gameObject.activeSelf)
         {
             SetFocus(focus - 1);
         }
@@ -206,30 +220,20 @@ public class Song : MonoBehaviour
         SetFocus(focus);
     }
 
-    // Plays currently selected Note on modification
-    public void PlayNote()
-    {
-        audioSources[focus].clip = audioClips[chords[focus].GetValue()][chords[focus].GetPitch()];
-        audioSources[focus].Play();
-        audioSources[focus].SetScheduledEndTime(AudioSettings.dspTime + chords[focus].GetValue() * 60 / tempo);
-    }
-
     // Plays the whole song
     public void PlaySong()
     {
         double currentTime = AudioSettings.dspTime;
         bool correct = true;
 
-        for (int i = 0; i < audioSources.Length; i += chords[i].GetValue())
+        for (int i = 0; i < chords.Length; i += chords[i].GetValue())
         {
             if (correct && chords[i].GetPitch() != (int) Pitch.Rest && chords[i].GetValue() != (int) levels[level][i].value && chords[i].GetPitch() != (int) levels[level][i].pitch)
             {
                 correct = false;
             }
 
-            audioSources[i].clip = audioClips[chords[i].GetValue()][chords[i].GetPitch()];
-            audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
-            audioSources[i].SetScheduledEndTime(currentTime + (i + chords[i].GetValue()) * 60 / tempo);
+            chords[i].PlayChord(currentTime + i * 60 / tempo);
         }
 
         if (correct)
@@ -248,13 +252,6 @@ public class Song : MonoBehaviour
     // Replays the goal song
     public void ReplaySong()
     {
-        double currentTime = AudioSettings.dspTime;
 
-        for (int i = 0; i < audioSources.Length; i += (int) levels[level][i].value)
-        {
-            audioSources[i].clip = audioClips[(int) levels[level][i].value][(int) levels[level][i].pitch];
-            audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
-            audioSources[i].SetScheduledEndTime(currentTime + (i + (int) levels[level][i].value) * 60 / tempo);
-        }
     }
 }

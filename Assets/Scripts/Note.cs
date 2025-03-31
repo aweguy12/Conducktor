@@ -20,9 +20,17 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     // Remembers when Note is being dragged (used to prevent single-click Pitch changes after a drag)
     private bool dragged = false;
 
+    // Remembers whether the Note is horizontally offset
     private bool offset = false;
+
+    // Used in OnDrag for dragging functionality
     private RectTransform rect;
     private Canvas canvas;
+
+    [HideInInspector]
+    // Index of Note in Chord
+    public int index = 0;
+
     private Chord chord;
     private Image image;
     private Pitch pitch = Pitch.Rest;
@@ -32,20 +40,20 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     private void Start()
     {
         rect = transform.parent.parent.parent.GetComponent<RectTransform>();
+        canvas = rect.GetComponent<Canvas>();
         chord = GetComponentInParent<Chord>();
         image = GetComponent<Image>();
-        canvas = rect.GetComponent<Canvas>();
 
         // Order Image components in children to match up with integral values of Value
         outlines = new Image[] { null, transform.GetChild(0).GetComponent<Image>(), transform.GetChild(1).GetComponent<Image>()};
     }
 
-    // Resets Pitch to rest but preserves Value
+    // Resets Pitch to rest
     public void Reset()
     {
-        while (pitch != Pitch.Rest)
+        while (pitch > Pitch.Rest)
         {
-            NoteDown();
+            chord.NoteDown();
         }
 
         image.sprite = chord.GetSprite((int) pitch);
@@ -56,28 +64,18 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         return (int) pitch;
     }
 
-    public bool IsEnabled()
-    {
-        return image.enabled;
-    }
-
     public void Offset(bool off)
     {
-        if (off)
+        if (off && !offset)
         {
             transform.localPosition += new Vector3(adjacentOffset, 0);
             offset = true;
         }
-        else if (offset)
+        else if (!off && offset)
         {
             transform.localPosition -= new Vector3(adjacentOffset, 0);
             offset = false;
         }
-    }
-
-    public void PlayCurrentNote()
-    {
-        chord.PlayNote();
     }
 
     public void SetSprite(Sprite sprite)
@@ -101,7 +99,7 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     // Moves Note Pitch up by 1
     public void NoteUp()
     {
-        image.sprite = chord.GetSprite((int)++pitch);
+        image.sprite = chord.GetSprite((int) ++pitch);
         transform.localPosition += new Vector3(0, pitchOffset);
     }
 
@@ -115,7 +113,7 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     // Set focus on click start
     public void OnPointerDown(PointerEventData eventData)
     {
-        chord.SetFocus();
+        chord.SetFocus(index);
         dragged = false;
     }
 
@@ -135,7 +133,7 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
                     break;
             }
 
-            PlayCurrentNote();
+            chord.PlayChord(AudioSettings.dspTime);
         }
     }
 
@@ -160,7 +158,7 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     {
         if (dragged)
         {
-            PlayCurrentNote();
+            chord.PlayChord(AudioSettings.dspTime);
         }
     }
 }

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1816827277913744788}
+  - component: {fileID: 7070575758336788904}
   m_Layer: 0
   m_Name: Chord
   m_TagString: Untagged
@@ -36,6 +37,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &7070575758336788904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7157044488113673069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bfd9660843d8be4680cf82a5f5a59f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horizontalOffset: 75
 --- !u!1001 &8918105482643592710
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -130,7 +144,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1878973680896617174, guid: fad8c5d233dadf34ca5a3d783ee6846c, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
