@@ -9,6 +9,7 @@ public class FadeOut : MonoBehaviour
 
     private Renderer objectrenderer;
     private Color color;
+    private bool isFading = false;  
 
     // Start is called before the first frame update
     void Start()
@@ -29,11 +30,23 @@ public class FadeOut : MonoBehaviour
 
     public void StartFadeOut()
     {
-        Debug.Log("StartFadeOut called");
-        StartCoroutine(FadeOutCoroutine());
+        if (!isFading)
+        {
+            StartCoroutine(FadeOutCoroutine());
+        }
+    }
+
+    public void StartFadeIn()
+    {
+        if (!isFading)
+        {
+            StartCoroutine(FadeInCoroutine());
+        }
+
     }
     IEnumerator FadeOutCoroutine()
     {
+        isFading = true;
         float elapsedTime = 0f;
         Color currentColor = color;
 
@@ -51,8 +64,29 @@ public class FadeOut : MonoBehaviour
         currentColor.a = 0f;
         objectrenderer.material.color = currentColor;
         yield return new WaitForSeconds(delay);
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
 
+    }
+
+    IEnumerator FadeInCoroutine()
+    {
+        isFading = true;
+
+        float elapsedTime = 0f;
+        Color color = objectrenderer.material.color;
+
+        while (elapsedTime < fadeDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float alpha = Mathf.Lerp(0f, 1f, elapsedTime / fadeDuration);
+
+            color.a = alpha;
+            objectrenderer.material.color = color;
+
+            yield return null;
+        }
+        objectrenderer.material.color = color;
+        isFading = false;
     }
 
 }

@@ -48,7 +48,7 @@ public class Song : MonoBehaviour
     public NoteValuePitch[] level12;
     
     // 0-indexed level so level + 1 is actual level number
-    private int level = 0;
+    public int level = 0;
 
     // Note that Song is focused/selected on, only modify this with SetFocus()
     private int focus = 0;
@@ -64,7 +64,8 @@ public class Song : MonoBehaviour
 
     //level-up sprites
     public GameObject levelSprite;
-    
+    Animator anim;
+    public FadeOut fadeOut;
 
     [Serializable]
     // Used to simplify Song creation in editor
@@ -78,6 +79,8 @@ public class Song : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        fadeOut = GetComponent<FadeOut>();
+        anim = GetComponent<Animator>();
         audioSources = GetComponentsInChildren<AudioSource>();
 
         // Ordered to match integral values of Value
@@ -161,6 +164,81 @@ public class Song : MonoBehaviour
         {
             ReplaySong();
         }
+
+        // level sprite animation
+        if (level == 1)
+        {
+            anim.Play("Level 1");
+            Debug.Log("Level 1");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 2)
+        {
+            anim.Play("Level 2");
+            Debug.Log("Level 2");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 3)
+        {
+            anim.Play("Level 3");
+            Debug.Log("Level 3");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 4)
+        {
+            anim.Play("Level 4");
+            Debug.Log("Level 4");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 5)
+        {
+            anim.Play("Level 5");
+            Debug.Log("Level 5");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 6)
+        {
+            anim.Play("Level 6");
+            Debug.Log("Level 6");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 7)
+        {
+            anim.Play("level 7");
+            Debug.Log("Level 7");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 8)
+        {
+            anim.Play("level 8");
+            Debug.Log("Level 8");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 9)
+        {
+            anim.Play("level 9");
+            Debug.Log("Level 9");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 10)
+        {
+            anim.Play("level 10");
+            Debug.Log("Level 10");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 11)
+        {
+            anim.Play("level 11");
+            Debug.Log("Level 11");
+            fadeOut.StartFadeIn();
+        }
+        else if (level == 12)
+        {
+            anim.Play("level 12");
+            Debug.Log("Level 12");
+            fadeOut.StartFadeIn();
+        }
+
     }
 
 
@@ -247,4 +325,6 @@ public class Song : MonoBehaviour
             audioSources[i].SetScheduledEndTime(currentTime + (i + (int) levels[level][i].value) * 60 / tempo);
         }
     }
+
+   
 }
