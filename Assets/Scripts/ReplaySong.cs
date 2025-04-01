@@ -11,7 +11,9 @@ public class ReplaySong : MonoBehaviour, IPointerClickHandler
 {
     private Song song;
     //added by danny
-    public Duck duck;
+    public DuckEasy duckEasy;
+    public DuckMed duckMed;
+    public DuckHard duckHard;
 
     // Start is called before the first frame update
     private void Start()
@@ -24,6 +26,8 @@ public class ReplaySong : MonoBehaviour, IPointerClickHandler
     {
         song.ReplaySong();
         //added by danny
-        duck.Repeat();
+        duckEasy.Repeat();
+        duckMed.Repeat();
+        duckHard.Repeat();
     }
 }
