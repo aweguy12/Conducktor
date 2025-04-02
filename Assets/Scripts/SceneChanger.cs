@@ -18,7 +18,7 @@ public class SceneChanger : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("Tutorial");
     }
 
     public void Settings()
