@@ -40,12 +40,6 @@ public class Song : MonoBehaviour
     public NoteValuePitch[] level8;
     [Tooltip("Song for level 9, include empty notes after half notes.")]
     public NoteValuePitch[] level9;
-    [Tooltip("Song for level 10, include empty notes after half notes.")]
-    public NoteValuePitch[] level10;
-    [Tooltip("Song for level 11, include empty notes after half notes.")]
-    public NoteValuePitch[] level11;
-    [Tooltip("Song for level 12, include empty notes after half notes.")]
-    public NoteValuePitch[] level12;
     
     // 0-indexed level so level + 1 is actual level number
     public int level = 0;
@@ -85,7 +79,7 @@ public class Song : MonoBehaviour
 
         // Ordered to match integral values of Value
         audioClips = new AudioClip[][] { null, quarterNoteAudioClips, halfNoteAudioClips };
-        levels = new NoteValuePitch[][] { level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, level11, level12 };
+        levels = new NoteValuePitch[][] { level1, level2, level3, level4, level5, level6, level7, level8, level9 };
         
         // Tell individual Notes what index they are
         for (int i = 0; i < notes.Length; i++)
@@ -218,7 +212,7 @@ public class Song : MonoBehaviour
 
         for (int i = 0; i < audioSources.Length; i += notes[i].GetValue())
         {
-            if (correct && notes[i].GetPitch() != (int) Pitch.Rest && notes[i].GetValue() != (int) levels[level][i].value && notes[i].GetPitch() != (int) levels[level][i].pitch)
+            if (correct && (notes[i].GetValue() != (int) levels[level][i].value || notes[i].GetPitch() != (int) levels[level][i].pitch))
             {
                 correct = false;
             }
