@@ -53,28 +53,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e1f27b1df5e62c4db77fff4781f8d16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  verticalOffset: 50
+  verticalOffset: 20
   horizontalOffset: 75
   quarterNoteSprites:
   - {fileID: 21300000, guid: 7f74427b9386bda4a8048c876c137fa7, type: 3}
-  - {fileID: 21300000, guid: a3ad8389e84e0b848940fd1956c89932, type: 3}
-  - {fileID: 21300000, guid: 3cf012055f049684a9bb321eae774ad3, type: 3}
-  - {fileID: 21300000, guid: af9720a78d1821844ba79a4fe44a6c70, type: 3}
-  - {fileID: 21300000, guid: a1a1c79f8ee31cb4c8d8a58b36891465, type: 3}
-  - {fileID: 21300000, guid: 1693e3ff61ad9a44dbbce85cef4113a7, type: 3}
-  - {fileID: 21300000, guid: a3c5bfb283a430b45b6dab333a9e04e3, type: 3}
-  - {fileID: 21300000, guid: 20ec8a6fa3df8e24d83793b88bc8954b, type: 3}
-  - {fileID: 21300000, guid: de78c38a75231a34cbc96f8463450efe, type: 3}
+  - {fileID: 21300000, guid: 3e2d72730eb56da4cb1987e9a4d0b5f7, type: 3}
+  - {fileID: 21300000, guid: 3b6efb030e34a4542983bc6d24afb223, type: 3}
+  - {fileID: 21300000, guid: 218550146fbace2438d7c215dc8d2799, type: 3}
+  - {fileID: 21300000, guid: 999d2df9e2bb1fb4a923cb3eedf77894, type: 3}
+  - {fileID: 21300000, guid: 18da9e5e3fa0c5a458c9e5386ce93207, type: 3}
+  - {fileID: 21300000, guid: 4b4881ecf75516b46bc5ffff1e5a649f, type: 3}
+  - {fileID: 21300000, guid: 6ced5a0af4855f64080aaf5a2803dd6d, type: 3}
+  - {fileID: 21300000, guid: d9450d1ad6bd9ce499d597bb3868a87d, type: 3}
   halfNoteSprites:
   - {fileID: 21300000, guid: b94168e38fcf0de4584d6a73521cd6f8, type: 3}
-  - {fileID: 21300000, guid: c09b67240ed2b7646b66ee8bdc228a2a, type: 3}
-  - {fileID: 21300000, guid: 259f2dff5039f8644aa1f2f5198a46f5, type: 3}
-  - {fileID: 21300000, guid: b109314bfebaff0448a8b2ce7e917eb2, type: 3}
-  - {fileID: 21300000, guid: 79a69e328edfd254cb6219868857716e, type: 3}
-  - {fileID: 21300000, guid: 13093c1964b24ba4087f23c6c51f8ea0, type: 3}
-  - {fileID: 21300000, guid: e08dc418f9608e94197a71a2a8d0e6f9, type: 3}
-  - {fileID: 21300000, guid: e2084b1b7eb3fb842a05cc3849d919d7, type: 3}
-  - {fileID: 21300000, guid: acdb7e9cfd1552146ac2e99fcb9f9803, type: 3}
+  - {fileID: 21300000, guid: e82add58f032ed04fb21c490f54be118, type: 3}
+  - {fileID: 21300000, guid: c51838752e9a17548ad5d2b7e5cfa61c, type: 3}
+  - {fileID: 21300000, guid: 8141e466fe590d64d8e92b19e3e9bb03, type: 3}
+  - {fileID: 21300000, guid: 1da4890459666a84fa4197bb079a7ffd, type: 3}
+  - {fileID: 21300000, guid: 87c86d4ea3399584f80cc3d7229a20d7, type: 3}
+  - {fileID: 21300000, guid: 74ff7cff656d852449696192a6fb8b8c, type: 3}
+  - {fileID: 21300000, guid: 3fae4578c0cd09f408692a95dfaa9fb7, type: 3}
+  - {fileID: 21300000, guid: 5558ee32c71572f4387e11a73fa2e9e2, type: 3}
 --- !u!222 &1535898120401280772
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -306,7 +306,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: -1
+  m_SortingOrder: -2
   m_TargetDisplay: 0
 --- !u!1 &2998246442317525528
 GameObject:

@@ -10,10 +10,6 @@ using UnityEngine.EventSystems;
 public class ReplaySong : MonoBehaviour, IPointerClickHandler
 {
     private Song song;
-    //added by danny
-    public DuckEasy duckEasy;
-    public DuckMed duckMed;
-    public DuckHard duckHard;
 
     // Start is called before the first frame update
     private void Start()
@@ -25,9 +21,5 @@ public class ReplaySong : MonoBehaviour, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         song.ReplaySong();
-        //added by danny
-        duckEasy.Repeat();
-        duckMed.Repeat();
-        duckHard.Repeat();
     }
 }

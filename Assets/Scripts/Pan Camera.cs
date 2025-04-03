@@ -9,8 +9,9 @@ using UnityEngine;
 public class PanCamera : MonoBehaviour
 {
     private bool down = false;
+    private bool panning = false;
     private Rigidbody2D rb;
-
+    public AudioSource bgm;
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -18,18 +19,25 @@ public class PanCamera : MonoBehaviour
 
     private void Update()
     {
-        if (down)
+        if (panning)
         {
-            if (rb.velocity.y >= 0.01)
+            if (down)
             {
-                rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+                if (rb.velocity.y >= 0.01)
+                {
+                    rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+                    panning = false;
+                    bgm.enabled = false;
+                }
             }
-        }
-        else
-        {
-            if (rb.velocity.y <= -0.01)
+            else
             {
-                rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+                if (rb.velocity.y <= -0.01)
+                {
+                    rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+                    panning = false;
+                    bgm.enabled = true;
+                }
             }
         }
     }
@@ -37,7 +45,11 @@ public class PanCamera : MonoBehaviour
     // Pans camera to given parameter y position
     public void Pan()
     {
-        down = !down;
-        rb.constraints = RigidbodyConstraints2D.None;
+        if (!panning)
+        {
+            panning = true;
+            down = !down;
+            rb.constraints = RigidbodyConstraints2D.None;
+        }
     }
 }

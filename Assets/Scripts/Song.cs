@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections;
 using UnityEngine;
 using ValuePitchEnums;
 
@@ -12,6 +13,9 @@ public class Song : MonoBehaviour
 {
     [Tooltip("Tempo of the song.")]
     public float tempo;
+
+    [Tooltip("The time it takes for level up to disappear.")]
+    public float levelTime;
 
     [Tooltip("Individual notes in order.")]
     public Note[] notes;
@@ -42,10 +46,14 @@ public class Song : MonoBehaviour
     public NoteValuePitch[] level9;
     
     // 0-indexed level so level + 1 is actual level number
-    public int level = 0;
+    private int level = 0;
 
     // Note that Song is focused/selected on, only modify this with SetFocus()
     private int focus = 0;
+
+    public GameObject levelUp;
+    private Animator leveling;
+    private Animator difficulty;
 
     // Note Audio Sources in order
     private AudioSource[] audioSources;
@@ -55,11 +63,6 @@ public class Song : MonoBehaviour
 
     // Above levels put in one array
     private NoteValuePitch[][] levels;
-
-    //level-up sprites
-    public GameObject levelSprite;
-    Animator anim;
-    public FadeOut fadeOut;
 
     [Serializable]
     // Used to simplify Song creation in editor
@@ -73,8 +76,6 @@ public class Song : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        fadeOut = GetComponent<FadeOut>();
-        anim = GetComponent<Animator>();
         audioSources = GetComponentsInChildren<AudioSource>();
 
         // Ordered to match integral values of Value
@@ -86,6 +87,9 @@ public class Song : MonoBehaviour
         {
             notes[i].SetIndex(i);
         }
+
+        leveling = levelUp.transform.GetChild(0).GetChild(0).GetComponent<Animator>();
+        difficulty = levelUp.transform.GetChild(0).GetChild(1).GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -158,10 +162,6 @@ public class Song : MonoBehaviour
         {
             ReplaySong();
         }
-
-        
-        
-
     }
 
 
@@ -224,16 +224,27 @@ public class Song : MonoBehaviour
 
         if (correct)
         {
-            foreach (Note note in notes)
-            {
-                note.Reset();
-            }
-
-            level++;
-            levelSprite.SetActive(true);
-
-            SetFocus(0);
+            StartCoroutine(LevelUp());
         }
+    }
+
+    IEnumerator LevelUp()
+    {
+        yield return new WaitForSeconds(notes.Length * 60 / tempo);
+
+        foreach (Note note in notes)
+        {
+            note.Reset();
+        }
+
+        level++;
+        levelUp.SetActive(true);
+        leveling.SetInteger("Level", level + 1);
+        difficulty.SetInteger("Difficulty", (level - 1) / 3);
+        SetFocus(0);
+
+        yield return new WaitForSeconds(levelTime);
+        levelUp.SetActive(false);
     }
 
     // Replays the goal song
