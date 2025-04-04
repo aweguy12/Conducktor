@@ -6510,11 +6510,11 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9191004258035919903}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: e3c47a082aed5394b9c20164a5ff1ab7, type: 2}
-  m_audioClip: {fileID: 8300000, guid: eb882109b5348044bab07a8886ed4cef, type: 3}
-  m_PlayOnAwake: 0
+  m_audioClip: {fileID: 8300000, guid: 004ac5dcf1ff779408c5ef8ff2dab847, type: 3}
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -6640,6 +6640,7 @@ GameObject:
   - component: {fileID: 8407624277001881042}
   - component: {fileID: 9158533290964203877}
   - component: {fileID: 5915942139404665104}
+  - component: {fileID: 9191004258035919904}
   m_Layer: 0
   m_Name: Duck
   m_TagString: Untagged
@@ -6647,6 +6648,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &9191004258035919904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9191004258035919903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b82f225e62a230848927d660f0bb6bae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quacks:
+  - {fileID: 8300000, guid: 004ac5dcf1ff779408c5ef8ff2dab847, type: 3}
+  - {fileID: 8300000, guid: 96010c15fa1064646ac7ffaad94131bc, type: 3}
+  - {fileID: 8300000, guid: 6e290c8a5ea75b64898bc05b069ce281, type: 3}
 --- !u!114 &9209151197455969635
 MonoBehaviour:
   m_ObjectHideFlags: 0
