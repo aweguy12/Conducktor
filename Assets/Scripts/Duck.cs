@@ -7,6 +7,7 @@ public class Duck : MonoBehaviour, IPointerDownHandler
 
     private Animator animator;
     private AudioSource audioSource;
+    private bool quacking = false;
 
     // Start is called before the first frame update
     void Start()
@@ -17,12 +18,17 @@ public class Duck : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        audioSource.clip = quacks[Random.Range(0, quacks.Length)];
-        animator.SetBool("Quack", true);
+        if (!quacking)
+        {
+            audioSource.clip = quacks[Random.Range(0, quacks.Length)];
+            animator.SetBool("Quack", true);
+            quacking = true;
+        }
     }
 
     public void QuackEnd()
     {
         animator.SetBool("Quack", false);
+        quacking = false;
     }
 }
