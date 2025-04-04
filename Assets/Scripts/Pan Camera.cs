@@ -11,7 +11,6 @@ public class PanCamera : MonoBehaviour
     private bool down = false;
     private bool panning = false;
     private Rigidbody2D rb;
-    public AudioSource bgm;
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -27,7 +26,6 @@ public class PanCamera : MonoBehaviour
                 {
                     rb.constraints = RigidbodyConstraints2D.FreezePositionY;
                     panning = false;
-                    bgm.enabled = false;
                 }
             }
             else
@@ -36,7 +34,6 @@ public class PanCamera : MonoBehaviour
                 {
                     rb.constraints = RigidbodyConstraints2D.FreezePositionY;
                     panning = false;
-                    bgm.enabled = true;
                 }
             }
         }
