@@ -14,9 +14,6 @@ public class Song : MonoBehaviour
     [Tooltip("Tempo of the song.")]
     public float tempo;
 
-    [Tooltip("The time it takes for level up to disappear.")]
-    public float levelTime;
-
     [Tooltip("Individual notes in order.")]
     public Note[] notes;
 
@@ -44,16 +41,14 @@ public class Song : MonoBehaviour
     public NoteValuePitch[] level8;
     [Tooltip("Song for level 9, include empty notes after half notes.")]
     public NoteValuePitch[] level9;
-    
+
+    public Duck duck;
+
     // 0-indexed level so level + 1 is actual level number
     private int level = 0;
 
     // Note that Song is focused/selected on, only modify this with SetFocus()
     private int focus = 0;
-
-    public GameObject levelUp;
-    private Animator leveling;
-    private Animator difficulty;
 
     // Note Audio Sources in order
     private AudioSource[] audioSources;
@@ -87,9 +82,6 @@ public class Song : MonoBehaviour
         {
             notes[i].SetIndex(i);
         }
-
-        leveling = levelUp.transform.GetChild(0).GetChild(0).GetComponent<Animator>();
-        difficulty = levelUp.transform.GetChild(0).GetChild(1).GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -160,7 +152,7 @@ public class Song : MonoBehaviour
         // R replays level song
         if (Input.GetKeyDown(KeyCode.R))
         {
-            ReplaySong();
+            duck.ReplaySong();
         }
     }
 
@@ -221,30 +213,33 @@ public class Song : MonoBehaviour
             audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
             audioSources[i].SetScheduledEndTime(currentTime + (i + notes[i].GetValue()) * 60 / tempo);
         }
-
-        if (correct)
-        {
-            StartCoroutine(LevelUp());
-        }
+        
+        StartCoroutine(LevelUp(correct));
     }
 
-    IEnumerator LevelUp()
+    IEnumerator LevelUp(bool correct)
     {
         yield return new WaitForSeconds(notes.Length * 60 / tempo);
 
-        foreach (Note note in notes)
+        if (correct)
         {
-            note.Reset();
+            foreach (Note note in notes)
+            {
+                note.Reset();
+            }
+
+            level++;
+            SetFocus(0);
+
+            duckAudioSource.clip = winSounds[UnityEngine.Random.Range(0, winSounds.Length)];
+            duckAnimator.SetBool("Quack", true);
+            duckAnimator.SetInteger("Difficulty", level / 3);
         }
-
-        level++;
-        levelUp.SetActive(true);
-        leveling.SetInteger("Level", level + 1);
-        difficulty.SetInteger("Difficulty", (level - 1) / 3);
-        SetFocus(0);
-
-        yield return new WaitForSeconds(levelTime);
-        levelUp.SetActive(false);
+        else
+        {
+            duckAudioSource.clip = loseSounds[UnityEngine.Random.Range(0, loseSounds.Length)];
+            duckAnimator.SetBool("Quack", true);
+        }
     }
 
     // Replays the goal song
@@ -258,7 +253,35 @@ public class Song : MonoBehaviour
             audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
             audioSources[i].SetScheduledEndTime(currentTime + (i + (int) levels[level][i].value) * 60 / tempo);
         }
+
+        frame = 0;
+        duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
     }
 
-   
+    private int frame = 0;
+    public Animator duckAnimator;
+    public AudioSource duckAudioSource;
+    public AudioClip[] winSounds;
+    public AudioClip[] loseSounds;
+
+    public void FrameEnd()
+    {
+        frame += (int) levels[level][frame].value;
+
+        if (frame >= 8)
+        {
+            duckAnimator.SetInteger("Value", 0);
+            duckAnimator.SetBool("Song", false);
+            return;
+        }
+
+        if (levels[level][frame].pitch == Pitch.Rest)
+        {
+            duckAnimator.SetInteger("Value", 3);
+        }
+        else
+        {
+            duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
+        }
+    }
 }

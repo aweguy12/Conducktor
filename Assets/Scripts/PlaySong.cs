@@ -11,10 +11,9 @@ public class PlaySong : MonoBehaviour, IPointerClickHandler
 {
     private Song song;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        song = GetComponentInParent<Song>();
+        song = transform.parent.GetComponent<Song>();
     }
 
     // Called when GameObject is clicked

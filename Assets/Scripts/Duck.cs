@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 public class Duck : MonoBehaviour, IPointerDownHandler
 {
     public AudioClip[] quacks;
+    public Song song;
 
     private Animator animator;
     private AudioSource audioSource;
@@ -14,6 +15,16 @@ public class Duck : MonoBehaviour, IPointerDownHandler
     {
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+    }
+
+    public void ReplaySong()
+    {
+        animator.SetBool("Song", true);
+    }
+
+    public void SongStartEnd()
+    {
+        song.ReplaySong();
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -30,5 +41,10 @@ public class Duck : MonoBehaviour, IPointerDownHandler
     {
         animator.SetBool("Quack", false);
         quacking = false;
+    }
+
+    public void FrameEnd()
+    {
+        song.FrameEnd();
     }
 }
