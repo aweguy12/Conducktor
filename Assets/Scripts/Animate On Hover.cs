@@ -6,6 +6,7 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class AnimateOnHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
