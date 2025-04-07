@@ -74,6 +74,12 @@ public class Song : MonoBehaviour
         public Pitch pitch;
     }
 
+    bool disabled = false;
+
+    public void Disable(bool disabled)
+    {
+        this.disabled = disabled;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -95,7 +101,7 @@ public class Song : MonoBehaviour
     void Update()
     {
         // Check left direction key input
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        if (!disabled && Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             int i = 0;
             // Seek left for enabled Note
@@ -112,7 +118,7 @@ public class Song : MonoBehaviour
         }
 
         // Check right direction key input
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (!disabled && Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             int i = 0;
 
@@ -130,34 +136,34 @@ public class Song : MonoBehaviour
         }
 
         // Check up direction key input        
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (!disabled && Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             notes[focus].NoteUp();
             PlayNote();
         }
 
         // Check down direction key input
-        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        if (!disabled && Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             notes[focus].NoteDown();
             PlayNote();
         }
 
         // Space changes Note Value
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (!disabled && Input.GetKeyDown(KeyCode.Space))
         {
             ChangeNoteValue();
             PlayNote();
         }
 
         // Enter plays created song
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (!disabled && Input.GetKeyDown(KeyCode.Return))
         {
             PlaySong();
         }
 
         // R replays level song
-        if (Input.GetKeyDown(KeyCode.R))
+        if (!disabled && Input.GetKeyDown(KeyCode.R))
         {
             replaySong.Invoke();
         }
@@ -207,27 +213,26 @@ public class Song : MonoBehaviour
     // Plays the whole song
     public void PlaySong()
     {
-        double currentTime = AudioSettings.dspTime;
+        StartCoroutine(Play());
+    }
+
+    IEnumerator Play()
+    {
         bool correct = true;
-        int prefocus = focus;
 
         for (int i = 0; i < notes.Length; i += notes[i].GetValue())
         {
-            if (correct && (notes[i].GetValue() != (int) levels[level][i].value || notes[i].GetPitch() != (int) levels[level][i].pitch))
+            if (correct && (notes[i].GetValue() != (int)levels[level][i].value || notes[i].GetPitch() != (int)levels[level][i].pitch))
             {
                 correct = false;
             }
 
             audioSources[i].clip = audioClips[notes[i].GetValue()][notes[i].GetPitch()];
-            audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
-            audioSources[i].SetScheduledEndTime(currentTime + (i + notes[i].GetValue()) * 60 / tempo);
+            audioSources[i].Play();
+            yield return new WaitForSeconds((float) notes[i].GetValue() * 60 / tempo);
         }
-        StartCoroutine(LevelUp(correct));
-    }
 
-    IEnumerator LevelUp(bool correct)
-    {
-        yield return new WaitForSeconds(notes.Length * 60 / tempo);
+        yield return new WaitForSeconds(1);
 
         if (correct)
         {
@@ -240,21 +245,22 @@ public class Song : MonoBehaviour
             SetFocus(0);
 
             duckAudioSource.clip = winSounds[UnityEngine.Random.Range(0, winSounds.Length)];
-            duckAnimator.SetBool("Quack", true);
+            duckAnimator.SetTrigger("Quack");
             duckAnimator.SetInteger("Difficulty", level / 3);
 
             if (level == 9)
             {
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(2);
                 level = 0;
                 duckAnimator.SetInteger("Difficulty", 0);
                 win.Invoke();
+                yield break;
             }
         }
         else
         {
             duckAudioSource.clip = loseSounds[UnityEngine.Random.Range(0, loseSounds.Length)];
-            duckAnimator.SetBool("Quack", true);
+            duckAnimator.SetTrigger("Quack");
         }
 
         resetButtons.Invoke();
@@ -263,17 +269,31 @@ public class Song : MonoBehaviour
     // Replays the goal song
     public void ReplaySong()
     {
-        double currentTime = AudioSettings.dspTime;
+        StartCoroutine(Replay());
 
+        
+    }
+
+    IEnumerator Replay()
+    {
+        frame = 0;
         for (int i = 0; i < audioSources.Length; i += (int) levels[level][i].value)
         {
             audioSources[i].clip = audioClips[(int) levels[level][i].value][(int) levels[level][i].pitch];
-            audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
-            audioSources[i].SetScheduledEndTime(currentTime + (i + (int) levels[level][i].value) * 60 / tempo);
-        }
+            audioSources[i].Play();
+            duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
+            yield return new WaitForSeconds((float) levels[level][frame].value * 60 / tempo);
+            frame += (int)levels[level][frame].value;
 
-        frame = 0;
-        duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
+            if (frame >= 8)
+            {
+                duckAnimator.SetInteger("Value", 3);
+                resetButtons.Invoke();
+                yield break;
+            }
+
+            duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
+        }
     }
 
     public UnityEvent win;
@@ -282,25 +302,4 @@ public class Song : MonoBehaviour
     public AudioSource duckAudioSource;
     public AudioClip[] winSounds;
     public AudioClip[] loseSounds;
-
-    public void FrameEnd()
-    {
-        frame += (int) levels[level][frame].value;
-
-        if (frame >= 8)
-        {
-            duckAnimator.SetInteger("Value", 0);
-            resetButtons.Invoke();
-            return;
-        }
-
-        if (levels[level][frame].pitch == Pitch.Rest)
-        {
-            duckAnimator.SetInteger("Value", 3);
-        }
-        else
-        {
-            duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
-        }
-    }
 }

@@ -13,11 +13,11 @@ public class SongNoteEnabler : MonoBehaviour
 
     public void EnDisable(bool enabled)
     {
-        song.enabled = enabled;
+        song.Disable(!enabled);
 
         foreach (Note note in notes)
         {
-            note.enabled = enabled;
+            note.Disable(!enabled);
         }
     }
 }

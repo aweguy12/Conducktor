@@ -45,9 +45,4 @@ public class Duck : MonoBehaviour
     {
         quacking = false;
     }
-
-    public void FrameEnd()
-    {
-        song.FrameEnd();
-    }
 }
