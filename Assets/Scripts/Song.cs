@@ -7,10 +7,17 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 using ValuePitchEnums;
 
 public class Song : MonoBehaviour
 {
+    public UnityEvent replaySong;
+    public UnityEvent resetButtons;
+    public Image changeValue;
+    public Sprite[] values;
+
     [Tooltip("Tempo of the song.")]
     public float tempo;
 
@@ -45,7 +52,7 @@ public class Song : MonoBehaviour
     public Duck duck;
 
     // 0-indexed level so level + 1 is actual level number
-    private int level = 0;
+    public int level = 0;
 
     // Note that Song is focused/selected on, only modify this with SetFocus()
     private int focus = 0;
@@ -152,7 +159,7 @@ public class Song : MonoBehaviour
         // R replays level song
         if (Input.GetKeyDown(KeyCode.R))
         {
-            duck.ReplaySong();
+            replaySong.Invoke();
         }
     }
 
@@ -163,6 +170,7 @@ public class Song : MonoBehaviour
         notes[this.focus].Selected(false);
         this.focus = focus;
         notes[focus].Selected(true);
+        changeValue.sprite = values[notes[focus].GetValue()];
     }
 
     // Called when Change Note Value button is pressed
@@ -201,8 +209,9 @@ public class Song : MonoBehaviour
     {
         double currentTime = AudioSettings.dspTime;
         bool correct = true;
+        int prefocus = focus;
 
-        for (int i = 0; i < audioSources.Length; i += notes[i].GetValue())
+        for (int i = 0; i < notes.Length; i += notes[i].GetValue())
         {
             if (correct && (notes[i].GetValue() != (int) levels[level][i].value || notes[i].GetPitch() != (int) levels[level][i].pitch))
             {
@@ -213,7 +222,6 @@ public class Song : MonoBehaviour
             audioSources[i].PlayScheduled(currentTime + i * 60 / tempo);
             audioSources[i].SetScheduledEndTime(currentTime + (i + notes[i].GetValue()) * 60 / tempo);
         }
-        
         StartCoroutine(LevelUp(correct));
     }
 
@@ -234,12 +242,22 @@ public class Song : MonoBehaviour
             duckAudioSource.clip = winSounds[UnityEngine.Random.Range(0, winSounds.Length)];
             duckAnimator.SetBool("Quack", true);
             duckAnimator.SetInteger("Difficulty", level / 3);
+
+            if (level == 9)
+            {
+                yield return new WaitForSeconds(1);
+                level = 0;
+                duckAnimator.SetInteger("Difficulty", 0);
+                win.Invoke();
+            }
         }
         else
         {
             duckAudioSource.clip = loseSounds[UnityEngine.Random.Range(0, loseSounds.Length)];
             duckAnimator.SetBool("Quack", true);
         }
+
+        resetButtons.Invoke();
     }
 
     // Replays the goal song
@@ -258,6 +276,7 @@ public class Song : MonoBehaviour
         duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
     }
 
+    public UnityEvent win;
     private int frame = 0;
     public Animator duckAnimator;
     public AudioSource duckAudioSource;
@@ -271,7 +290,7 @@ public class Song : MonoBehaviour
         if (frame >= 8)
         {
             duckAnimator.SetInteger("Value", 0);
-            duckAnimator.SetBool("Song", false);
+            resetButtons.Invoke();
             return;
         }
 

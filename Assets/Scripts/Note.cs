@@ -41,7 +41,7 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     // Start is called before the first frame update
     private void Start()
     {
-        rect = transform.parent.parent.GetComponent<RectTransform>();
+        rect = transform.parent.GetComponent<RectTransform>();
         song = GetComponentInParent<Song>();
         image = GetComponent<Image>();
         canvas = transform.parent.parent.GetComponent<Canvas>();
@@ -174,10 +174,10 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
             switch (eventData.button)
             {
                 case PointerEventData.InputButton.Left:
-                    NoteDown();
+                    NoteUp();
                     break;
                 case PointerEventData.InputButton.Right:
-                    NoteUp();
+                    NoteDown();
                     break;
             }
 

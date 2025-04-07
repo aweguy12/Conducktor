@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Duck : MonoBehaviour, IPointerDownHandler
+public class Duck : MonoBehaviour
 {
     public AudioClip[] quacks;
     public AudioClip robotQuack;
@@ -18,17 +18,12 @@ public class Duck : MonoBehaviour, IPointerDownHandler
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void ReplaySong()
-    {
-        animator.SetBool("Song", true);
-    }
-
     public void SongStartEnd()
     {
         song.ReplaySong();
     }
 
-    public void OnPointerDown(PointerEventData eventData)
+    public void Quack()
     {
         if (!quacking)
         {
@@ -41,14 +36,13 @@ public class Duck : MonoBehaviour, IPointerDownHandler
                 audioSource.clip = quacks[Random.Range(0, quacks.Length)];
             }
 
-            animator.SetBool("Quack", true);
+            animator.SetTrigger("Quack");
             quacking = true;
         }
     }
 
     public void QuackEnd()
     {
-        animator.SetBool("Quack", false);
         quacking = false;
     }
 
