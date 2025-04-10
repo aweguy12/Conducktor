@@ -153,10 +153,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9fdaa8075c416348919b26ff9521fdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  replaySong:
+  interactionHandler: {fileID: 1978993393}
+  changeValue: {fileID: 1583460120}
+  values:
+  - {fileID: 0}
+  - {fileID: 21300000, guid: ec5ed92ad79e90942a91417a0dd1f387, type: 3}
+  - {fileID: 21300000, guid: ff298f7875c33734caec51a04a92188f, type: 3}
+  duck: {fileID: 9191004258035919904}
+  win:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2072437523667949650}
+      - m_Target: {fileID: 502408422}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
         m_Mode: 5
@@ -165,41 +172,45 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Replay
+          m_StringArgument: Credits
           m_BoolArgument: 0
         m_CallState: 2
-  resetButtons:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1978993393}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+      - m_Target: {fileID: 502408421}
+        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Credits
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 502408421}
+        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
+        m_MethodName: set_loop
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
+          m_StringArgument: Credits
+          m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1978993394}
-        m_TargetAssemblyTypeName: SongNoteEnabler, Assembly-CSharp
-        m_MethodName: EnDisable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  changeValue: {fileID: 1583460120}
-  values:
-  - {fileID: 0}
-  - {fileID: 21300000, guid: ec5ed92ad79e90942a91417a0dd1f387, type: 3}
-  - {fileID: 21300000, guid: ff298f7875c33734caec51a04a92188f, type: 3}
+  duckAnimator: {fileID: 2072437523667949650}
+  duckAudioSource: {fileID: 8407624277001881042}
+  winSounds:
+  - {fileID: 8300000, guid: a2156037ab029fe47a6ce29fa7d334a6, type: 3}
+  - {fileID: 8300000, guid: a6d909f14c1d48b4ea44909b86017de1, type: 3}
+  - {fileID: 8300000, guid: 5bddb502d40fff54088b21b819bc6824, type: 3}
+  loseSounds:
+  - {fileID: 8300000, guid: e027fc5f5f947644487922f07c4e742c, type: 3}
+  - {fileID: 8300000, guid: 0b24d77ff46eee64badae4932569cacc, type: 3}
+  - {fileID: 8300000, guid: fc77fd83778da894b86e0599d3b0285c, type: 3}
+  waitTime: 1.5
+  disabled: 0
   tempo: 120
   notes:
   - {fileID: 904420337}
@@ -383,57 +394,6 @@ MonoBehaviour:
     pitch: 6
   - value: 1
     pitch: 5
-  duck: {fileID: 9191004258035919904}
-  level: 0
-  win:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 502408422}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Credits
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 502408421}
-        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Credits
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 502408421}
-        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: set_loop
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Credits
-          m_BoolArgument: 0
-        m_CallState: 2
-  duckAnimator: {fileID: 2072437523667949650}
-  duckAudioSource: {fileID: 8407624277001881042}
-  winSounds:
-  - {fileID: 8300000, guid: a2156037ab029fe47a6ce29fa7d334a6, type: 3}
-  - {fileID: 8300000, guid: a6d909f14c1d48b4ea44909b86017de1, type: 3}
-  - {fileID: 8300000, guid: 5bddb502d40fff54088b21b819bc6824, type: 3}
-  loseSounds:
-  - {fileID: 8300000, guid: e027fc5f5f947644487922f07c4e742c, type: 3}
-  - {fileID: 8300000, guid: 0b24d77ff46eee64badae4932569cacc, type: 3}
-  - {fileID: 8300000, guid: fc77fd83778da894b86e0599d3b0285c, type: 3}
 --- !u!224 &83153255
 RectTransform:
   m_ObjectHideFlags: 0
@@ -458,7 +418,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -150, y: -150}
+  m_AnchoredPosition: {x: -100, y: -150}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &83153257
@@ -1496,8 +1456,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1978993393}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1507,9 +1467,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1978993394}
-        m_TargetAssemblyTypeName: SongNoteEnabler, Assembly-CSharp
-        m_MethodName: EnDisable
+      - m_Target: {fileID: 1978993393}
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: SongNotes
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2154,7 +2114,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -100, y: -100}
+  m_AnchoredPosition: {x: -200, y: -100}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!82 &892629936
@@ -2322,8 +2282,20 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 1978993393}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1978993393}
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: SongNotes
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2899,18 +2871,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 502408422}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: SetTrigger
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: Credits
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 502408421}
         m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
         m_MethodName: Play
@@ -2933,6 +2893,18 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 502408422}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Credits
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1095295549
@@ -3493,7 +3465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200, y: -100}
+  m_AnchoredPosition: {x: 300, y: -100}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!82 &1404991074
@@ -3661,8 +3633,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1978993393}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3673,8 +3645,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1666321052}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3857,7 +3829,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1481387201
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3874,7 +3846,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 100, y: -100}
+  m_AnchoredPosition: {x: 200, y: -100}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1481387202
@@ -4739,7 +4711,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1666321047}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4772,6 +4744,8 @@ MonoBehaviour:
   - {fileID: 1095295548}
   - {fileID: 9209151197455969635}
   - {fileID: 1481387202}
+  song: {fileID: 0}
+  notes: []
 --- !u!1 &1754241541
 GameObject:
   m_ObjectHideFlags: 0
@@ -5040,18 +5014,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1978993393}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 2072437523667949650}
         m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
         m_MethodName: SetTrigger
@@ -5064,9 +5026,21 @@ MonoBehaviour:
           m_StringArgument: Replay
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1978993394}
-        m_TargetAssemblyTypeName: SongNoteEnabler, Assembly-CSharp
-        m_MethodName: EnDisable
+      - m_Target: {fileID: 1978993393}
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1978993393}
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: SongNotes
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5257,10 +5231,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -5658,7 +5632,6 @@ GameObject:
   - component: {fileID: 1978993390}
   - component: {fileID: 1978993389}
   - component: {fileID: 1978993393}
-  - component: {fileID: 1978993394}
   m_Layer: 0
   m_Name: Gameplay Canvas
   m_TagString: Untagged
@@ -5768,24 +5741,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttons:
-  - {fileID: 1755892943}
-  - {fileID: 788280980}
   - {fileID: 1583460123}
+  - {fileID: 788280980}
+  - {fileID: 1755892943}
   - {fileID: 892629939}
   - {fileID: 1404991075}
   - {fileID: 9191004258035919906}
---- !u!114 &1978993394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1978993388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d97a2fd5f2c16f84d8b4dd1c7d29ac8e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   song: {fileID: 83153253}
   notes:
   - {fileID: 904420337}
@@ -6025,8 +5986,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1666321052}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6037,8 +5998,20 @@ MonoBehaviour:
           m_BoolArgument: 1
         m_CallState: 2
       - m_Target: {fileID: 1978993393}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1978993393}
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: SongNotes
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6114,7 +6087,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -350, y: 300}
+  m_AnchoredPosition: {x: -400, y: 300}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &384705944902254248
@@ -6266,7 +6239,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -100, y: -100}
+  m_AnchoredPosition: {x: -200, y: -100}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4264580780347625582
@@ -6528,8 +6501,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1666321052}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6540,8 +6513,8 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1978993393}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6636,11 +6609,11 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9191004258035919903}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 24300002, guid: e3c47a082aed5394b9c20164a5ff1ab7, type: 2}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -6864,14 +6837,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9191004258035919904}
         m_TargetAssemblyTypeName: Duck, Assembly-CSharp
-        m_MethodName: Quack
+        m_MethodName: Clicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: Quack
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &9209151197455969635
@@ -6930,18 +6903,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1666321052}
-        m_TargetAssemblyTypeName: InteractableButtons, Assembly-CSharp
-        m_MethodName: Interactable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 1785733537}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
         m_MethodName: SetActive
@@ -6953,6 +6914,18 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 1
+        m_CallState: 2
+      - m_Target: {fileID: 1666321052}
+        m_TargetAssemblyTypeName: InteractionHandler, Assembly-CSharp
+        m_MethodName: Buttons
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
         m_CallState: 2
 --- !u!82 &9209151197455969637
 AudioSource:

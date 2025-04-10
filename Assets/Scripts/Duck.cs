@@ -1,15 +1,23 @@
+/*
+ * Name: Jack Gu
+ * Date: 4/10/25
+ * Desc: Controls certain duck functions
+ */
+
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class Duck : MonoBehaviour
 {
+    [Tooltip("Quack on click variants, randomized.")]
     public AudioClip[] quacks;
+
+    [Tooltip("Robot duck quack.")]
     public AudioClip robotQuack;
+
     public Song song;
 
     private Animator animator;
     private AudioSource audioSource;
-    private bool quacking = false;
 
     // Start is called before the first frame update
     void Start()
@@ -18,31 +26,37 @@ public class Duck : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void SongStartEnd()
+    public void SongStart()
     {
         song.ReplaySong();
     }
 
-    public void Quack()
+    public void Clicked()
     {
-        if (!quacking)
+        if (animator.GetInteger("Difficulty") == 2)
         {
-            if (animator.GetInteger("Difficulty") == 2)
-            {
-                audioSource.clip = robotQuack;
-            }
-            else
-            {
-                audioSource.clip = quacks[Random.Range(0, quacks.Length)];
-            }
-
-            animator.SetTrigger("Quack");
-            quacking = true;
+            Quack(robotQuack);
+        }
+        else
+        {
+            Quack(quacks[Random.Range(0, quacks.Length)]);
         }
     }
 
-    public void QuackEnd()
+    public void Quack(AudioClip clip)
     {
-        quacking = false;
+        animator.SetTrigger("Quack");
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+
+    public void SetDifficulty(int difficulty)
+    {
+        animator.SetInteger("Difficulty", difficulty);
+    }
+
+    public void SetValue(int value)
+    {
+        animator.SetInteger("Value", value);
     }
 }

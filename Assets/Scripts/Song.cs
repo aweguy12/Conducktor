@@ -13,10 +13,20 @@ using ValuePitchEnums;
 
 public class Song : MonoBehaviour
 {
-    public UnityEvent replaySong;
-    public UnityEvent resetButtons;
+    public InteractionHandler interactionHandler;
     public Image changeValue;
     public Sprite[] values;
+    public Duck duck;
+    public UnityEvent win;
+    private int note = 0;
+    public Animator duckAnimator;
+    public AudioSource duckAudioSource;
+    public AudioClip[] winSounds;
+    public AudioClip[] loseSounds;
+    public float waitTime = 1.5f;
+
+    [HideInInspector]
+    public bool disabled = false;
 
     [Tooltip("Tempo of the song.")]
     public float tempo;
@@ -49,10 +59,8 @@ public class Song : MonoBehaviour
     [Tooltip("Song for level 9, include empty notes after half notes.")]
     public NoteValuePitch[] level9;
 
-    public Duck duck;
-
     // 0-indexed level so level + 1 is actual level number
-    public int level = 0;
+    private int level = 0;
 
     // Note that Song is focused/selected on, only modify this with SetFocus()
     private int focus = 0;
@@ -74,13 +82,6 @@ public class Song : MonoBehaviour
         public Pitch pitch;
     }
 
-    bool disabled = false;
-
-    public void Disable(bool disabled)
-    {
-        this.disabled = disabled;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -100,8 +101,13 @@ public class Song : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (disabled)
+        {
+            return;
+        }
+
         // Check left direction key input
-        if (!disabled && Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
         {
             int i = 0;
             // Seek left for enabled Note
@@ -118,7 +124,7 @@ public class Song : MonoBehaviour
         }
 
         // Check right direction key input
-        if (!disabled && Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
         {
             int i = 0;
 
@@ -136,36 +142,37 @@ public class Song : MonoBehaviour
         }
 
         // Check up direction key input        
-        if (!disabled && Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
             notes[focus].NoteUp();
             PlayNote();
         }
 
         // Check down direction key input
-        if (!disabled && Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             notes[focus].NoteDown();
             PlayNote();
         }
 
         // Space changes Note Value
-        if (!disabled && Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangeNoteValue();
             PlayNote();
         }
 
         // Enter plays created song
-        if (!disabled && Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Return))
         {
             PlaySong();
         }
 
         // R replays level song
-        if (!disabled && Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
-            replaySong.Invoke();
+            interactionHandler.Buttons(false);
+            interactionHandler.SongNotes(false);
         }
     }
 
@@ -207,7 +214,6 @@ public class Song : MonoBehaviour
     {
         audioSources[focus].clip = audioClips[notes[focus].GetValue()][notes[focus].GetPitch()];
         audioSources[focus].Play();
-        audioSources[focus].SetScheduledEndTime(AudioSettings.dspTime + notes[focus].GetValue() * 60 / tempo);
     }
 
     // Plays the whole song
@@ -219,20 +225,24 @@ public class Song : MonoBehaviour
     IEnumerator Play()
     {
         bool correct = true;
+        int prefocus = focus;
 
         for (int i = 0; i < notes.Length; i += notes[i].GetValue())
         {
-            if (correct && (notes[i].GetValue() != (int)levels[level][i].value || notes[i].GetPitch() != (int)levels[level][i].pitch))
+            if (correct && (notes[i].GetValue() != (int) levels[level][i].value || notes[i].GetPitch() != (int) levels[level][i].pitch))
             {
                 correct = false;
             }
 
+            SetFocus(i);
             audioSources[i].clip = audioClips[notes[i].GetValue()][notes[i].GetPitch()];
             audioSources[i].Play();
             yield return new WaitForSeconds((float) notes[i].GetValue() * 60 / tempo);
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(waitTime);
+
+        SetFocus(prefocus);
 
         if (correct)
         {
@@ -241,65 +251,55 @@ public class Song : MonoBehaviour
                 note.Reset();
             }
 
-            level++;
-            SetFocus(0);
+            duck.Quack(winSounds[UnityEngine.Random.Range(0, winSounds.Length)]);
 
-            duckAudioSource.clip = winSounds[UnityEngine.Random.Range(0, winSounds.Length)];
-            duckAnimator.SetTrigger("Quack");
-            duckAnimator.SetInteger("Difficulty", level / 3);
-
-            if (level == 9)
+            if (++level == 9)
             {
-                yield return new WaitForSeconds(2);
+                yield return new WaitForSeconds(waitTime);
                 level = 0;
-                duckAnimator.SetInteger("Difficulty", 0);
+                duck.SetDifficulty(0);
                 win.Invoke();
-                yield break;
             }
+            else
+            {
+                duck.SetDifficulty(level / 3);
+            }
+
+            SetFocus(0);
         }
         else
         {
-            duckAudioSource.clip = loseSounds[UnityEngine.Random.Range(0, loseSounds.Length)];
-            duckAnimator.SetTrigger("Quack");
+            duck.Quack(loseSounds[UnityEngine.Random.Range(0, loseSounds.Length)]);
         }
 
-        resetButtons.Invoke();
+        interactionHandler.Buttons(true);
+        interactionHandler.SongNotes(true);
     }
 
     // Replays the goal song
     public void ReplaySong()
     {
-        StartCoroutine(Replay());
-
-        
+        StartCoroutine(Replay());  
     }
 
     IEnumerator Replay()
     {
-        frame = 0;
+        note = 0;
         for (int i = 0; i < audioSources.Length; i += (int) levels[level][i].value)
         {
             audioSources[i].clip = audioClips[(int) levels[level][i].value][(int) levels[level][i].pitch];
             audioSources[i].Play();
-            duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
-            yield return new WaitForSeconds((float) levels[level][frame].value * 60 / tempo);
-            frame += (int)levels[level][frame].value;
+            duck.SetValue((int) levels[level][note].value);
+            yield return new WaitForSeconds((float) levels[level][note].value * 60 / tempo);
+            note += (int)levels[level][note].value;
 
-            if (frame >= 8)
+            if (note >= 8)
             {
                 duckAnimator.SetInteger("Value", 3);
-                resetButtons.Invoke();
+                interactionHandler.Buttons(true);
+                interactionHandler.SongNotes(true);
                 yield break;
             }
-
-            duckAnimator.SetInteger("Value", (int) levels[level][frame].value);
         }
     }
-
-    public UnityEvent win;
-    private int frame = 0;
-    public Animator duckAnimator;
-    public AudioSource duckAudioSource;
-    public AudioClip[] winSounds;
-    public AudioClip[] loseSounds;
 }

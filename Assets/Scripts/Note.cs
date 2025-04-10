@@ -23,6 +23,9 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     [Tooltip("Half note sprites in order, starting with rest.")]
     public Sprite[] halfNoteSprites;
 
+    [HideInInspector]
+    public bool disabled = false;
+
     // Stores own Note index in Song
     private int index;
     
@@ -37,8 +40,6 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     private Pitch pitch = Pitch.Rest;
     private Image[] outlines;
     private Sprite[][] sprites;
-
-    private bool disabled = false;
 
     // Start is called before the first frame update
     private void Start()
@@ -69,11 +70,6 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
         }
 
         image.sprite = sprites[(int) value][(int) pitch];
-    }
-
-    public void Disable(bool disabled)
-    {
-        this.disabled = disabled;
     }
 
     public int GetPitch()
@@ -169,17 +165,24 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     // Set focus on click start
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!disabled)
+        if (disabled)
         {
-            song.SetFocus(index);
-            dragged = false;
+            return;
         }
+
+        song.SetFocus(index);
+        dragged = false;
     }
 
     // Moves Note on click end if Note was not dragged
     public void OnPointerUp(PointerEventData eventData)
     {
-        if (!disabled && !dragged)
+        if (disabled)
+        {
+            return;
+        }
+
+        if (!dragged)
         {
             switch (eventData.button)
             {
@@ -198,26 +201,33 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     // Moves Note on drag
     public void OnDrag(PointerEventData eventData)
     {
-        if (!disabled)
+        if (disabled)
         {
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
-            if (localPoint.y < transform.localPosition.y - verticalOffset / 2)
-            {
-                NoteDown();
-                dragged = true;
-            }
-            else if (localPoint.y * canvas.scaleFactor > transform.localPosition.y + verticalOffset / 2)
-            {
-                NoteUp();
-                dragged = true;
-            }
+            return;
+        }
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint);
+        if (localPoint.y < transform.localPosition.y - verticalOffset / 2)
+        {
+            NoteDown();
+            dragged = true;
+        }
+        else if (localPoint.y * canvas.scaleFactor > transform.localPosition.y + verticalOffset / 2)
+        {
+            NoteUp();
+            dragged = true;
         }
     }
 
     // Only plays Note sound after the drag
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (!disabled && dragged)
+        if (disabled)
+        {
+            return;
+        }
+
+        if (dragged)
         {
             PlayCurrentNote();
         }
