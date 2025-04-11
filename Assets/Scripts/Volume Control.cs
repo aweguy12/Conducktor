@@ -3,15 +3,17 @@
  * Date: 3/24/2025
  * Desc: Used for the settings menu to change volume of sounds
 */
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.Events;
 
 //Attach script to empty gameobject
 public class VolumeControl : MonoBehaviour
 {
+    public UnityEvent closeSettings;
+
     public Slider sfxSlider;
     public Slider musicSlider;
     public AudioMixer sfxMixer;
@@ -46,5 +48,11 @@ public class VolumeControl : MonoBehaviour
         musicMixer.SetFloat(musicVolumeParameter, volume);
         PlayerPrefs.SetFloat("SFXVolume", volume);
         PlayerPrefs.Save();
+    }
+
+    public void Close()
+    {
+        transform.parent.gameObject.SetActive(false);
+        closeSettings.Invoke();
     }
 }

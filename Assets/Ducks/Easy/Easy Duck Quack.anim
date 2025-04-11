@@ -32,8 +32,6 @@ AnimationClip:
       value: {fileID: 21300000, guid: 69d257e0316880a4a8dc3a2252311339, type: 3}
     - time: 0.41666666
       value: {fileID: 21300000, guid: cc7cbbcbe37a76b4398574db12044b79, type: 3}
-    - time: 0.48333332
-      value: {fileID: 21300000, guid: 4f4d238b52b28b5409b1b7365feebeaa, type: 3}
     attribute: m_Sprite
     path: 
     classID: 114
@@ -62,7 +60,6 @@ AnimationClip:
     - {fileID: 21300000, guid: 53dea232b0f6c414ca160ad7db52dca7, type: 3}
     - {fileID: 21300000, guid: 69d257e0316880a4a8dc3a2252311339, type: 3}
     - {fileID: 21300000, guid: cc7cbbcbe37a76b4398574db12044b79, type: 3}
-    - {fileID: 21300000, guid: 4f4d238b52b28b5409b1b7365feebeaa, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
@@ -87,4 +84,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0.5
+    functionName: QuackEnd
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

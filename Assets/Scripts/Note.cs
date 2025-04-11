@@ -24,7 +24,7 @@ public class Note : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDrag
     public Sprite[] halfNoteSprites;
 
     [HideInInspector]
-    public bool disabled = false;
+    public bool disabled = true;
 
     // Stores own Note index in Song
     private int index;

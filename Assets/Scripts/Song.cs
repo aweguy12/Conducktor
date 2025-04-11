@@ -26,7 +26,7 @@ public class Song : MonoBehaviour
     public float waitTime = 1.5f;
 
     [HideInInspector]
-    public bool disabled = false;
+    public bool disabled = true;
 
     [Tooltip("Tempo of the song.")]
     public float tempo;
@@ -60,7 +60,7 @@ public class Song : MonoBehaviour
     public NoteValuePitch[] level9;
 
     // 0-indexed level so level + 1 is actual level number
-    private int level = 0;
+    public int level = 0;
 
     // Note that Song is focused/selected on, only modify this with SetFocus()
     private int focus = 0;
@@ -159,12 +159,13 @@ public class Song : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ChangeNoteValue();
-            PlayNote();
         }
 
         // Enter plays created song
         if (Input.GetKeyDown(KeyCode.Return))
         {
+            interactionHandler.Buttons(false);
+            interactionHandler.SongNotes(true);
             PlaySong();
         }
 
@@ -172,7 +173,8 @@ public class Song : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
         {
             interactionHandler.Buttons(false);
-            interactionHandler.SongNotes(false);
+            interactionHandler.SongNotes(true);
+            duckAnimator.SetTrigger("Replay");
         }
     }
 
@@ -207,6 +209,8 @@ public class Song : MonoBehaviour
 
         // Set focus again because it was reset by ChangeValue()
         SetFocus(focus);
+
+        PlayNote();
     }
 
     // Plays currently selected Note on modification
@@ -263,6 +267,8 @@ public class Song : MonoBehaviour
             else
             {
                 duck.SetDifficulty(level / 3);
+                interactionHandler.Buttons(true);
+                interactionHandler.SongNotes(false);
             }
 
             SetFocus(0);
@@ -270,10 +276,9 @@ public class Song : MonoBehaviour
         else
         {
             duck.Quack(loseSounds[UnityEngine.Random.Range(0, loseSounds.Length)]);
+            interactionHandler.Buttons(true);
+            interactionHandler.SongNotes(false);
         }
-
-        interactionHandler.Buttons(true);
-        interactionHandler.SongNotes(true);
     }
 
     // Replays the goal song
@@ -289,15 +294,15 @@ public class Song : MonoBehaviour
         {
             audioSources[i].clip = audioClips[(int) levels[level][i].value][(int) levels[level][i].pitch];
             audioSources[i].Play();
-            duck.SetValue((int) levels[level][note].value);
+            duck.SetValue(levels[level][note].pitch == Pitch.Rest ? 0 : (int) levels[level][note].value);
             yield return new WaitForSeconds((float) levels[level][note].value * 60 / tempo);
-            note += (int)levels[level][note].value;
+            note += (int) levels[level][note].value;
 
             if (note >= 8)
             {
                 duckAnimator.SetInteger("Value", 3);
                 interactionHandler.Buttons(true);
-                interactionHandler.SongNotes(true);
+                interactionHandler.SongNotes(false);
                 yield break;
             }
         }

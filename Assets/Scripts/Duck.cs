@@ -16,6 +16,7 @@ public class Duck : MonoBehaviour
 
     public Song song;
 
+    private bool quacking = false;
     private Animator animator;
     private AudioSource audioSource;
 
@@ -33,14 +34,14 @@ public class Duck : MonoBehaviour
 
     public void Clicked()
     {
-        if (animator.GetInteger("Difficulty") == 2)
+        if (quacking)
         {
-            Quack(robotQuack);
+            return;
         }
-        else
-        {
-            Quack(quacks[Random.Range(0, quacks.Length)]);
-        }
+
+        quacking = true;
+
+        Quack(quacks[Random.Range(0, quacks.Length)]);
     }
 
     public void Quack(AudioClip clip)
@@ -48,6 +49,11 @@ public class Duck : MonoBehaviour
         animator.SetTrigger("Quack");
         audioSource.clip = clip;
         audioSource.Play();
+    }
+
+    public void QuackEnd()
+    {
+        quacking = false;
     }
 
     public void SetDifficulty(int difficulty)
